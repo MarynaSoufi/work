@@ -1,3 +1,4 @@
+import React from 'react'
 import { StyleSheet, Text, View } from 'react-native';
 import { LoginScreen, OnboardingScreen }  from './app/screens';
 import { NavigationContainer } from '@react-navigation/native';
@@ -6,28 +7,21 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { navigatonRef } from './app/navigation/rootNavigation';
 import AuthNavigator from './app/navigation/AuthNavigator';
 import  AppNavigator from './app/navigation/AppNavigator';
+import { useAuth, AuthProvider } from './app/firebase/auth';
 import 'react-native-gesture-handler';
 
 
 const Stack = createStackNavigator();
 export default function App() {
   return (
-    <AppContent />
-  //   <NavigationContainer>
-  //   <Stack.Navigator
-  //    screenOptions={{
-  //     headerShown: false
-  //   }}
-  //   >
-  //     <Stack.Screen name="Onboarding" component={OnboardingScreen}/>
-  //     <Stack.Screen name="Login" component={LoginScreen}/>
-  //  </Stack.Navigator>
-  // </NavigationContainer>
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
 function AppContent() {
-  const user = true;
+  const {user} = useAuth();
 
   return (
     <>
