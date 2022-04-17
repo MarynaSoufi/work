@@ -5,8 +5,8 @@ import Onboarding from 'react-native-onboarding-swiper';
 export default function OnboardingScreen({navigation}) {
   return (
     <Onboarding
-    onSkip={() =>navigation.replace("Login")}
-    onDone={() =>navigation.navigate("Login")}
+    onSkip={() =>navigation.replace("Welcome")}
+    onDone={() =>navigation.navigate("Welcome")}
     pages={[
       {
         backgroundColor: '#FFFFFF',
