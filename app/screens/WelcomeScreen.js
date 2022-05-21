@@ -8,13 +8,13 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 export default function WelcomeScreen({navigation}) {
 
   return (
-    <View>
-      {/* <Image style={styles.image} source={require("../assets/icon.png")}/> */}
+    <View style={styles.container}>
+      <Image style={styles.image} source={require("../assets/bird.jpg")}/>
       <View style={styles.btn_wrapper}>
-      <MaterialCommunityIcons onPress={() => navigation.navigate("Login")} name="login" size={42} color={colors.mint} />
-      <MaterialCommunityIcons onPress={() => navigation.navigate("Register")} name="registered-trademark" size={42} color={colors.mint} />
-        {/* <Button styleBtn={styles.loginBtn} styleText={styles.text} text="LOGIN" onPress={() => navigation.navigate(routes.LOGIN)} ></Button>
-        <Button styleBtn={styles.registerBtn} styleText={styles.text} text="REGISTER" onPress={() => navigation.navigate(routes.REGISTER)}></Button> */}
+      {/* <MaterialCommunityIcons onPress={() => navigation.navigate("Login")} name="login" size={42} color={colors.mint} /> */}
+      {/* <MaterialCommunityIcons onPress={() => navigation.navigate("Register")} name="registered-trademark" size={42} color={colors.mint} /> */}
+      <Button styleBtn={styles.loginBtn} styleText={styles.loginText} text="LOGIN" onPress={() => navigation.navigate("Login")} name="login" size={42} color={colors.mint}/>
+      <Button styleBtn={styles.registerBtn} styleText={styles.loginText} text="REGISTER" onPress={() => navigation.navigate("Register")} name="registered-trademark" size={42} color={colors.mint}/>
       </View>
     </View>
   )
@@ -26,16 +26,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-   width:300,
-   height:300, 
+   width:400,
+   height:400, 
   },
   btn_wrapper: {
     width:"100%",
     paddingHorizontal: 20,
+    marginTop: 150
     
    },
   loginBtn: {
-    backgroundColor:colors.main,
+    backgroundColor:colors.orange,
     width: "100%",
     height: 60,
     alignItems: "center",
@@ -43,10 +44,12 @@ const styles = StyleSheet.create({
     color: "white",
     borderRadius: 15,
     marginBottom: 20,
-  }
-  ,
+  },
+  loginText: {
+    color: "white",
+  },
   registerBtn: {
-    backgroundColor: colors.mainLight,
+    backgroundColor: colors.green,
     width: "100%",
     height: 60,
     alignItems: "center",

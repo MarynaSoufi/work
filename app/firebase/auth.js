@@ -30,6 +30,7 @@ export function AuthProvider ({ children }) {
         image: avatarUrl,
         status: 'online',
         city: '',
+        firstVisit: true,
       })
     return await response.user.updateProfile({
       displayName: name,

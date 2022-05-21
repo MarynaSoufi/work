@@ -6,7 +6,7 @@ import { useAuth } from '../firebase/auth';
 import colors from '../config/colors';
 
 export default function SettingsScreen() {
-  const {user, logout} = useAuth()
+  const {user, logout} = useAuth();
   return (
     <View>
       <Text>SettingsScreen</Text>

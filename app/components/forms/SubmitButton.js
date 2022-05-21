@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   loginBtn: {
-    backgroundColor: colors.yellow,
+    backgroundColor: colors.orange,
     width: "95%",
     height: 60,
     alignItems: "center",

@@ -5,7 +5,7 @@ export default {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: color.mint,
+    primary: color.green,
     background: color.white,
   }
 }
