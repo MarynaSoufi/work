@@ -1,15 +1,16 @@
 
-import { StyleSheet, Text, View,  KeyboardAvoidingView, Pressable} from 'react-native'
+import { StyleSheet, Text, View,  KeyboardAvoidingView, Pressable, Image, Alert,  ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { firestore } from '../firebase/firebase';
 import { useAuth } from '../firebase/auth';
 import Modal from "react-native-modal";
 import { useFirestoreQuery } from '../firebase/useFirestoreQuery';
-import { ActivityIndicator, Screen, Button } from '../components';
-import { AppForm, AppFormField, SelectFromField, SubmitButton, DateSelectField, CalendarSeelectField, CustomSelect, ErrorMessage } from '../components/forms';
+import { ActivityIndicator, Screen } from '../components';
+import { AppForm, SelectFromField, SubmitButton, CalendarSeelectField, ErrorMessage, MultiSliderField } from '../components/forms';
 import * as Yup from 'yup';
 import color from '../config/colors';
 import useLocation from '../hooks/useLocation';
+import { MaterialIcons } from '@expo/vector-icons'; 
 
 const validationSchema = Yup.object().shape({
   myPet: Yup.string().required().label("MyPet"),
@@ -33,9 +34,10 @@ export default function HomeScreen() {
   const [ firstVisit, setFirstVisit ] = useState(true);
   const [loading, setLoading] = useState(false);
   const [loginFailed, setLoginFailed] = useState(false);
-  const [ visibleSheet, setVisibleSheet ] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalGuestVisible, setModalGuestVisible] = useState(false);
+  const [myFromDate, setMyFromDate]= useState('');
+  const [guestFromDate, setGuestFromDate]= useState('');
   const location = useLocation();
 
   const { data } = useFirestoreQuery(firestore.collection('users').doc(user.uid));
@@ -58,24 +60,24 @@ export default function HomeScreen() {
   }
   const handleSubmit = async(info) => {
     try {
-      const dist = getDistance(41.756, 51.223)
-      console.log('INFO=.>>',info);
-      console.log('myPet',info.myPet);
-      console.log('myDates.from',info.myDates.from);
-      console.log('myDates.till',info.myDates.till);
+      // const dist = getDistance(41.756, 51.223)
+      // console.log('INFO=.>>',info);
+      // console.log('myPet',info.myPet);
+      // console.log('myDates.from',info.myDates.from);
+      // console.log('myDates.till',info.myDates.till);
+      console.log('info', info.range);
       const request = {
         myPet: info.myPet,
-        myFromDate: info.myDates.from.toString(),
-        myTillDate: info.myDates.till.toString(),
+        myFromDate: info.myDates.from.toISOString(),
+        myTillDate: info.myDates.till.toISOString(),
         guestPet: info.guestPet,
         guestFromDate: info.guestDates.from.toISOString(),
         guestTillDate: info.guestDates.till.toISOString(),
         myLocation: location,
+        range: +info.range
       };
       console.log(request);
-      console.log(user.uid);
       let doc = firestore.collection('settings').doc(user.uid);
-      //console.log(JSON.stringify(doc));
       await doc.set(request);
 
       // await firestore.collection('users').doc(user.uid).update({
@@ -83,7 +85,7 @@ export default function HomeScreen() {
       // })
     }
     catch(error){
-      console.log('ntok')
+      console.log(error)
     }
   }
 
@@ -100,16 +102,21 @@ export default function HomeScreen() {
   return (
     <>
     <ActivityIndicator visible={loading}/>
-     <Screen style={styles.container} >
+     <Screen Screen style={styles.container} >
+     <Image style={styles.logo} source={require('../assets/iconPetlyS.png')}/>
+     <ScrollView>
      {firstVisit && 
       <AppForm
-      initialValues={{myPet: "",  myDates:{from: "", till: "" }, guestPet: "", guestDates:{from: "", till: "" }}}
-      // initialValues={{myPet: ""}}
+      initialValues={{myPet: "",  myDates:{from: "", till: "" }, guestPet: "", guestDates:{from: "", till: "" }, range: 5}}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}>
       <ErrorMessage error="Invalid email and/or password" visible={loginFailed} />
-      <SelectFromField name="myPet" arr={kindOfPet} text="Choose the animal"/>
-      <View style={styles.centeredView}>
+      <SelectFromField name="myPet" arr={kindOfPet} text="Choose your pet to look after"/>
+      <CalendarSeelectField tillName="myDates.till" fromName="myDates.from" text="Pick dates when your pet needs to be looked after"/>
+      <SelectFromField name="guestPet" arr={kindOfPet} text="Choose the pet for wich you are ready to look after"/> 
+      <CalendarSeelectField tillName="guestDates.till" fromName="guestDates.from" text="Pick dates when your are ready to look after the guest pet"/>
+      <MultiSliderField text="Pick dates when your are ready to look after the guest pe" name="range"/>
+      {/* <View style={styles.centeredView}>
           <Modal
             animationType="slide"
             transparent={true}
@@ -136,10 +143,10 @@ export default function HomeScreen() {
             style={[styles.button, styles.buttonOpen]}
             onPress={() => setModalVisible(true)}
           >
-            <Text style={styles.textStyle}>Show Modal</Text>
+            <MaterialIcons name="date-range" size={24} color="black" />
             </Pressable>
           </View> 
-          <SelectFromField name="guestPet" arr={kindOfPet} text="Choose the animal"/> 
+          <SelectFromField name="guestPet" arr={kindOfPet} text="Choose the pet for wich you are ready to look after"/> 
         <View style={styles.centeredView}>
           <Modal
             animationType="slide"
@@ -169,14 +176,15 @@ export default function HomeScreen() {
           >
             <Text style={styles.textStyle}>Show Modal</Text>
             </Pressable>
-          </View> 
+          </View>  */}
          <SubmitButton title="SUBMIT"/>
         </AppForm>
      }
      {!firstVisit && <View><Text>ggg</Text></View>
 
      }
-    </Screen>
+    </ScrollView>
+    </Screen >
     </>
  
   )
@@ -191,7 +199,7 @@ const styles = StyleSheet.create({
     flex: 2,
     justifyContent: "flex-start",
     alignItems: "center",
-    marginTop: 22
+    marginTop: 22,
   },
   modalView: {
     margin: 20,
@@ -214,7 +222,9 @@ const styles = StyleSheet.create({
     elevation: 2
   },
   buttonOpen: {
-    backgroundColor: "#F194FF",
+    backgroundColor: color.green,
+    width: "100%",
+    borderRadius:15,
   },
   buttonClose: {
     backgroundColor: "#2196F3",
@@ -227,5 +237,10 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: "center"
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    alignSelf: 'center'
   }
 })

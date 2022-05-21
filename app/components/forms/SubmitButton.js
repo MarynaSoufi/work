@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     backgroundColor: colors.orange,
-    width: "95%",
+    width: "100%",
     height: 60,
     alignItems: "center",
     justifyContent: "center",

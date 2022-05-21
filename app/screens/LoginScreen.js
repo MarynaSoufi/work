@@ -32,7 +32,7 @@ export default function LoginScreen() {
     <ActivityIndicator visible={loading}/>
      <Screen style={styles.container} >
       <KeyboardAvoidingView  behavior="position" keyboardVerticalPosition={Platform.OS === "ios" ? 0: 40}>
-      <Image style={styles.logo} source={require('../assets/icon.jpg')}/>
+      <Image style={styles.logo} source={require('../assets/iconPetlyS.png')}/>
       <AppForm
       initialValues={{email: "", password: ""}}
       onSubmit={handleSubmit}
@@ -71,8 +71,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    width: 200,
-    height: 200,
-    marginBottom: 100
+    width: 300,
+    height: 300,
+    marginBottom: 100,
+    alignSelf: 'center',
   }
 })

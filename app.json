@@ -4,9 +4,9 @@
     "slug": "petly",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./app/assets/icon.png",
+    "icon": "./app/assets/iconPetly.png",
     "splash": {
-      "image": "./app/assets/splash.png",
+      "image": "./app/assets/splash1.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

@@ -26,8 +26,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-   width:400,
-   height:400, 
+   width:300,
+   height:300, 
+   marginTop: 100
   },
   btn_wrapper: {
     width:"100%",
