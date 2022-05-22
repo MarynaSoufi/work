@@ -33,7 +33,7 @@ export default function RegisterScreen() {
     <ActivityIndicator visible={loading}/>
      <Screen style={styles.container}>
        <KeyboardAvoidingView behavior="position" keyboardVerticalPosition={Platform.OS === "ios" ? 0: 50}>
-       <Image style={styles.logo} source={require('../assets/icon.png')}/>
+       <Image style={styles.logo} source={require('../assets/iconPetlyS.png')}/>
        <AppForm
        initialValues={{email: "", password: "", name:""}}
        onSubmit={handleSubmit}
@@ -73,4 +73,11 @@ export default function RegisterScreen() {
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  logo: {
+    width: 300,
+    height: 300,
+    marginBottom: 100,
+    alignSelf: 'center',
+  }
+})

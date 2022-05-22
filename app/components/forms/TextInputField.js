@@ -7,7 +7,7 @@ import defaultStyles from '../../config/styles';
 export default function TextInputField({icon, ...otherProps}) {
   return (
     <View style={styles.container}>
-    {icon && <MaterialCommunityIcons name={icon} size={20} color={color.main} style={styles.icon}/>}
+    {icon && <MaterialCommunityIcons name={icon} size={20} color={color.green} style={styles.icon}/>}
       <TextInput style={styles.text} {...otherProps}/>
     </View>
   )
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     margin: 10,
     borderWidth: 2,
-    borderColor: color.main,
+    borderColor: color.orange,
     borderRadius: 15,
   },
   text: defaultStyles.text,

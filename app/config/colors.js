@@ -5,8 +5,11 @@ export default {
   white: "#ffffff",
   gray: "#685E68",
   black: "#000000",
-  lightGray: '#f5f5f5',
-  text: '#424242',
+  lightGray: "#EFF0F2",
+  text: "#424242",
+  green: "#39765D",
+  orange: "#FEBE67",
+  red: "#FF0000"
 
   
 }

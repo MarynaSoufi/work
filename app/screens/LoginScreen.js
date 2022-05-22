@@ -20,21 +20,19 @@ export default function LoginScreen() {
     try {
       setLoading(true);
      await login(email, password)
-      
     }
     catch(error){
       setLoginFailed(true);
       setLoading(false);
-
     }
-    
+
   }
   return (
     <>
     <ActivityIndicator visible={loading}/>
      <Screen style={styles.container} >
       <KeyboardAvoidingView  behavior="position" keyboardVerticalPosition={Platform.OS === "ios" ? 0: 40}>
-      {/* <Image style={styles.logo} source={require('../assets/chat-icon.png')}/> */}
+      <Image style={styles.logo} source={require('../assets/iconPetlyS.png')}/>
       <AppForm
       initialValues={{email: "", password: ""}}
       onSubmit={handleSubmit}
@@ -66,4 +64,16 @@ export default function LoginScreen() {
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: "center",
+  },
+  logo: {
+    width: 300,
+    height: 300,
+    marginBottom: 100,
+    alignSelf: 'center',
+  }
+})
