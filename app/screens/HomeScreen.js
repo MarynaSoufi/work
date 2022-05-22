@@ -1,23 +1,27 @@
 
-import { StyleSheet, Text, View,  KeyboardAvoidingView, Pressable, Image, Alert,  ScrollView } from 'react-native'
+import { StyleSheet, Text, View, Image, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { firestore } from '../firebase/firebase';
 import { useAuth } from '../firebase/auth';
-import Modal from "react-native-modal";
 import { useFirestoreQuery } from '../firebase/useFirestoreQuery';
 import { ActivityIndicator, Screen } from '../components';
 import { AppForm, SelectFromField, SubmitButton, CalendarSeelectField, ErrorMessage, MultiSliderField } from '../components/forms';
 import * as Yup from 'yup';
 import color from '../config/colors';
 import useLocation from '../hooks/useLocation';
-import { MaterialIcons } from '@expo/vector-icons'; 
 
 const validationSchema = Yup.object().shape({
-  myPet: Yup.string().required().label("MyPet"),
-  // myDates: Yup.object().shape({
-  //   from: Yup.date().required().label("from"),
-  //   till: Yup.date().required().label("till"),
-  // })
+  myPet: Yup.string().required().label("My Pet"),
+  guestPet: Yup.string().required().label("Guest Pet"),
+  range: Yup.number().required().label("Range"),
+  guestDates: Yup.object().shape({
+    from: Yup.date().required('Mandatory field message').label("From"),
+    till: Yup.string().required('Mandatory field message').label("Till"),
+  }),
+  myDates: Yup.object().shape({
+    from: Yup.date().required('Mandatory field message').label("From"),
+    till: Yup.string().required('Mandatory field message').label("Till"),
+  }),
 })
 
 const kindOfPet = [
@@ -33,11 +37,7 @@ export default function HomeScreen() {
   const { user } = useAuth();
   const [ firstVisit, setFirstVisit ] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [loginFailed, setLoginFailed] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalGuestVisible, setModalGuestVisible] = useState(false);
-  const [myFromDate, setMyFromDate]= useState('');
-  const [guestFromDate, setGuestFromDate]= useState('');
+  const [failed, setFailed] = useState(false);
   const location = useLocation();
 
   const { data } = useFirestoreQuery(firestore.collection('users').doc(user.uid));
@@ -60,12 +60,7 @@ export default function HomeScreen() {
   }
   const handleSubmit = async(info) => {
     try {
-      // const dist = getDistance(41.756, 51.223)
-      // console.log('INFO=.>>',info);
-      // console.log('myPet',info.myPet);
-      // console.log('myDates.from',info.myDates.from);
-      // console.log('myDates.till',info.myDates.till);
-      console.log('info', info.range);
+      setLoading(true);
       const request = {
         myPet: info.myPet,
         myFromDate: info.myDates.from.toISOString(),
@@ -80,12 +75,13 @@ export default function HomeScreen() {
       let doc = firestore.collection('settings').doc(user.uid);
       await doc.set(request);
 
-      // await firestore.collection('users').doc(user.uid).update({
-      //   firstVisit: false,
-      // })
+      await firestore.collection('users').doc(user.uid).update({
+        firstVisit: false,
+      })
     }
     catch(error){
-      console.log(error)
+      setFailed(true);
+      setLoading(false);
     }
   }
 
@@ -95,8 +91,6 @@ export default function HomeScreen() {
 
   useEffect(() => {
     setData();
-    // firestore.collection('users').doc(user.uid).update({
-    //   firstVisit: false})
   }, [data])
 
   return (
@@ -110,73 +104,12 @@ export default function HomeScreen() {
       initialValues={{myPet: "",  myDates:{from: "", till: "" }, guestPet: "", guestDates:{from: "", till: "" }, range: 5}}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}>
-      <ErrorMessage error="Invalid email and/or password" visible={loginFailed} />
+      <ErrorMessage error="You need to fill all fields" visible={failed} />
       <SelectFromField name="myPet" arr={kindOfPet} text="Choose your pet to look after"/>
-      <CalendarSeelectField tillName="myDates.till" fromName="myDates.from" text="Pick dates when your pet needs to be looked after"/>
+      <CalendarSeelectField name="myDates" tillName="myDates.till" fromName="myDates.from" text="Pick dates when your pet needs to be looked after"/>
       <SelectFromField name="guestPet" arr={kindOfPet} text="Choose the pet for wich you are ready to look after"/> 
-      <CalendarSeelectField tillName="guestDates.till" fromName="guestDates.from" text="Pick dates when your are ready to look after the guest pet"/>
+      <CalendarSeelectField name="guestDates" tillName="guestDates.till" fromName="guestDates.from" text="Pick dates when your are ready to look after the guest pet"/>
       <MultiSliderField text="Pick dates when your are ready to look after the guest pe" name="range"/>
-      {/* <View style={styles.centeredView}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => {
-              Alert.alert("Modal has been closed.");
-              setModalVisible(!modalVisible);
-            }}
-          >
-            
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-              <CalendarSeelectField tillName="myDates.till" fromName="myDates.from"/>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalVisible(!modalVisible)}
-                >
-                  <Text style={styles.textStyle}>Hide Modal</Text>
-                </Pressable>
-              </View>
-            </View>
-          </Modal>
-          <Pressable
-            style={[styles.button, styles.buttonOpen]}
-            onPress={() => setModalVisible(true)}
-          >
-            <MaterialIcons name="date-range" size={24} color="black" />
-            </Pressable>
-          </View> 
-          <SelectFromField name="guestPet" arr={kindOfPet} text="Choose the pet for wich you are ready to look after"/> 
-        <View style={styles.centeredView}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalGuestVisible}
-            onRequestClose={() => {
-              Alert.alert("Modal has been closed.");
-              setModalVisible(!modalVisible);
-            }}
-          >
-            
-            <View style={styles.centeredView}>
-              <View style={styles.modalView}>
-              <CalendarSeelectField tillName="guestDates.till" fromName="guestDates.from"/>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => setModalGuestVisible(!modalGuestVisible)}
-                >
-                  <Text style={styles.textStyle}>Hide Modal</Text>
-                </Pressable>
-              </View>
-            </View>
-          </Modal>
-          <Pressable
-            style={[styles.button, styles.buttonOpen]}
-            onPress={() => setModalGuestVisible(true)}
-          >
-            <Text style={styles.textStyle}>Show Modal</Text>
-            </Pressable>
-          </View>  */}
          <SubmitButton title="SUBMIT"/>
         </AppForm>
      }

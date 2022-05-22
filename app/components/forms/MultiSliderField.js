@@ -4,11 +4,11 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import { MaterialIcons } from '@expo/vector-icons';
 import color from '../../config/colors';
 import { useFormikContext } from 'formik';
+import ErrorMessage from './ErrorMessage';
 
 export default function MultiSliderField({name, text}) {
   const [value, setvalue] = useState(5);
-  const{ handleChange, errors, setFieldTouched, touched, setFieldValue, values } = useFormikContext();
- console.log("name", name);
+  const{ errors, touched, setFieldValue, } = useFormikContext();
 
   const disableScroll = (values) =>{
     setvalue(values)
@@ -18,7 +18,6 @@ export default function MultiSliderField({name, text}) {
     setvalue(values)
     setFieldValue(name, +values);
   }
-  console.log('value', +value);
 
   return (
     <View style={styles.container}>
@@ -38,6 +37,7 @@ export default function MultiSliderField({name, text}) {
           max={255}
           min={5}
         />
+        <ErrorMessage error={errors[name]} visible={touched[name]}/>
         <View style={styles.textWrapper}><Text>{value}km</Text></View>
       </View>
     </View>

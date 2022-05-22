@@ -3,11 +3,12 @@ import React, { useState } from 'react'
 import CalendarPicker from 'react-native-calendar-picker';
 import colors from '../../config/colors';
 import { useFormikContext } from 'formik';
+import ErrorMessage from './ErrorMessage';
 
-export default function CalendarSeelectField({tillName, fromName, text,  ...otherProps}) {
+export default function CalendarSeelectField({name, tillName, fromName, text,  ...otherProps}) {
   const [selectedStartDate, setSelectedStartDate] = useState(false);
   const [selectedEndDate, setSelectedEndDate] = useState(null);
-  const{ handleChange, errors, setFieldTouched, touched, setFieldValue, values, setValues  } = useFormikContext();
+  const{ errors,  touched, setFieldValue } = useFormikContext();
  
   const onDateChange = ( date, type) => {
     //function to handle the date change
@@ -25,6 +26,7 @@ export default function CalendarSeelectField({tillName, fromName, text,  ...othe
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{text}</Text>
+      <ErrorMessage error={errors[tillName]} visible={touched[tillName]}/>
       <View style={styles.wrapper}>
       <CalendarPicker
         startFromMonday={true}

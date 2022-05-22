@@ -9,6 +9,7 @@ export default {
   text: "#424242",
   green: "#39765D",
   orange: "#FEBE67",
+  red: "#FF0000"
 
   
 }
