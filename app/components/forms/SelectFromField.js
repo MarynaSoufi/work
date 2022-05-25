@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: Platform.OS === "android" ? "Roboto" : "Avenir",
     fontSize: 12,
+    color: color.white,
     textAlign: "center",
     marginBottom: 10,
     backgroundColor: color.orange,
@@ -71,10 +72,18 @@ const styles = StyleSheet.create({
     borderRadius: 5
   },
   container: {
+    width: "99%",
+    alignSelf: 'center',
     marginVertical:20,
     padding:10,
     borderWidth: 2,
-    borderColor: color.orange,
+    borderColor: color.white,
     borderRadius:15,
+    backgroundColor: 'white',
+    shadowColor: '#171717',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 5,
   },
 })

@@ -1,27 +1,115 @@
 
-import { StyleSheet, Text, View, Image, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, View, Image, ScrollView, FlatList, } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import { firestore } from '../firebase/firebase';
 import { useAuth } from '../firebase/auth';
 import { useFirestoreQuery } from '../firebase/useFirestoreQuery';
-import { ActivityIndicator, Screen } from '../components';
+import { ActivityIndicator, Screen,  ListItemSeparator, SwitcherItem } from '../components';
+import ListItem from '../components/ListItem';
 import { AppForm, SelectFromField, SubmitButton, CalendarSeelectField, ErrorMessage, MultiSliderField } from '../components/forms';
 import * as Yup from 'yup';
 import color from '../config/colors';
 import useLocation from '../hooks/useLocation';
 
+const PROFILE_DATA = [
+  {
+    id: 1,
+    firstNmae: "Marry",
+    lastName: "Soufi",
+    location: "Brussel",
+    photoUrl: "https://avatars.githubusercontent.com/u/70641421?v=4",
+    age: 31,
+  },
+  {
+    id: 2,
+    firstNmae: "Aiden",
+    lastName: "Soufi",
+    location: "Ghent",
+    photoUrl: "https://avatars.githubusercontent.com/u/68068622?s=120&v=4",
+    age: 34,
+  },
+  {
+    id: 3,
+    firstNmae: "Maryna",
+    lastName: "Soufi",
+    location: "Brugge",
+    photoUrl: "https://www.zmoji.me/wp-content/uploads/2019/11/5-Incredible-Avatar-Maker-Free-Tools-You%E2%80%99ve-Missed-Before.jpg",
+    age: 31,
+  },
+  {
+    id: 4,
+    firstNmae: "Maryna",
+    lastName: "Soufi",
+    location: "Brugge",
+    photoUrl: "https://www.zmoji.me/wp-content/uploads/2019/11/5-Incredible-Avatar-Maker-Free-Tools-You%E2%80%99ve-Missed-Before.jpg",
+    age: 31,
+  },
+  {
+    id: 5,
+    firstNmae: "Maryna",
+    lastName: "Soufi",
+    location: "Brugge",
+    photoUrl: "https://www.zmoji.me/wp-content/uploads/2019/11/5-Incredible-Avatar-Maker-Free-Tools-You%E2%80%99ve-Missed-Before.jpg",
+    age: 31,
+  },
+  {
+    id: 6,
+    firstNmae: "Maryna",
+    lastName: "Soufi",
+    location: "Brugge",
+    photoUrl: "https://www.zmoji.me/wp-content/uploads/2019/11/5-Incredible-Avatar-Maker-Free-Tools-You%E2%80%99ve-Missed-Before.jpg",
+    age: 31,
+  }
+]
+
+const SWITCER_DATA = [
+  {
+    id: 1,
+    title: "Request",
+    isRequest: true
+  },
+  {
+    id: 2,
+    title: "Offer",
+    isRequest: false
+  },
+
+]
+
+const SWITCER_PETS = [
+  {
+    id: 1,
+    title: "Dogs",
+  },
+  {
+    id: 2,
+    title: "Cats",
+  },
+  {
+    id: 3,
+    title: "Rodents",
+  },
+  {
+    id: 4,
+    title: "Birds",
+  },
+  {
+    id: 5,
+    title: "Fishes",
+  },
+  {
+    id: 6,
+    title: "Reptiles",
+  },
+
+]
 const validationSchema = Yup.object().shape({
-  myPet: Yup.string().required().label("My Pet"),
-  guestPet: Yup.string().required().label("Guest Pet"),
-  range: Yup.number().required().label("Range"),
-  guestDates: Yup.object().shape({
-    from: Yup.date().required('Mandatory field message').label("From"),
-    till: Yup.string().required('Mandatory field message').label("Till"),
-  }),
-  myDates: Yup.object().shape({
-    from: Yup.date().required('Mandatory field message').label("From"),
-    till: Yup.string().required('Mandatory field message').label("Till"),
-  }),
+  pet: Yup.string().required().label("Pet"),
+  range: Yup.number().label("Range"),
+  // dates: Yup.object().shape({
+  //   from: Yup.date().required('Mandatory field message').label("From"),
+  //   till: Yup.string().required('Mandatory field message').label("Till"),
+  // }),
 })
 
 const kindOfPet = [
@@ -39,8 +127,15 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
   const location = useLocation();
+  const [req, setReq] = useState(true);
+  const [active, setActive] = useState(1);
+  const scrollViewRef = useRef();
 
   const { data } = useFirestoreQuery(firestore.collection('users').doc(user.uid));
+
+  useEffect(() => {
+    setData();
+  }, [data])
 
   const getDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371e3; // metres
@@ -61,19 +156,19 @@ export default function HomeScreen() {
   const handleSubmit = async(info) => {
     try {
       setLoading(true);
+      console.log(typeof info.dates.from);
       const request = {
-        myPet: info.myPet,
-        myFromDate: info.myDates.from.toISOString(),
-        myTillDate: info.myDates.till.toISOString(),
-        guestPet: info.guestPet,
-        guestFromDate: info.guestDates.from.toISOString(),
-        guestTillDate: info.guestDates.till.toISOString(),
+        user: user.uid,
+        pet: info.pet,
+        fromDate: info.dates.from.toISOString(),
+        tillDate: info.dates.till.toISOString(),
         myLocation: location,
-        range: +info.range
+        range: +info.range,
+        isRequest: req
       };
       console.log(request);
-      let doc = firestore.collection('settings').doc(user.uid);
-      await doc.set(request);
+      let doc = firestore.collection('settings');
+      await doc.add(request);
 
       await firestore.collection('users').doc(user.uid).update({
         firstVisit: false,
@@ -89,37 +184,126 @@ export default function HomeScreen() {
     setFirstVisit(data?.firstVisit)
   }
 
-  useEffect(() => {
-    setData();
-  }, [data])
-
+const toggleActive = async (item) => {
+  setReq(item.isRequest);
+  setActive(item.id);
+}
   return (
     <>
     <ActivityIndicator visible={loading}/>
-     <Screen Screen style={styles.container} >
+     <Screen style={styles.container} >
+     {firstVisit && req &&
+     <> 
+     <View style={styles.scroll}>
      <Image style={styles.logo} source={require('../assets/iconPetlyS.png')}/>
-     <ScrollView>
-     {firstVisit && 
+        <FlatList 
+          horizontal
+          style={styles.switcher}
+          data={SWITCER_DATA}
+          keyExtractor={d => d.id.toString()}
+          renderItem={({item}) =>
+            <SwitcherItem
+              isActive={active}
+              id={item.id}
+              title={item.title}
+              onPress={()=>toggleActive(item)}
+              />
+          }
+          /> 
+     </View>
+      <ScrollView scrollbars="none">
       <AppForm
-      initialValues={{myPet: "",  myDates:{from: "", till: "" }, guestPet: "", guestDates:{from: "", till: "" }, range: 5}}
+      initialValues={{pet: "",  dates:{from: "", till: "" }, range: 5}}
       onSubmit={handleSubmit}
-      validationSchema={validationSchema}>
+     >
       <ErrorMessage error="You need to fill all fields" visible={failed} />
-      <SelectFromField name="myPet" arr={kindOfPet} text="Choose your pet to look after"/>
-      <CalendarSeelectField name="myDates" tillName="myDates.till" fromName="myDates.from" text="Pick dates when your pet needs to be looked after"/>
-      <SelectFromField name="guestPet" arr={kindOfPet} text="Choose the pet for wich you are ready to look after"/> 
-      <CalendarSeelectField name="guestDates" tillName="guestDates.till" fromName="guestDates.from" text="Pick dates when your are ready to look after the guest pet"/>
+      <SelectFromField name="pet" arr={kindOfPet} text="Choose your pet to look after"/>
+      <CalendarSeelectField name="dates" tillName="dates.till" fromName="dates.from" text="Pick dates when your pet needs to be looked after"/>
       <MultiSliderField text="Pick dates when your are ready to look after the guest pe" name="range"/>
-         <SubmitButton title="SUBMIT"/>
-        </AppForm>
+      <SubmitButton title="CONFIRM"/>
+      </AppForm>
+    </ScrollView>   
+    </>
      }
-     {!firstVisit && <View><Text>ggg</Text></View>
-
+      {firstVisit && !req &&
+      <>
+       <View style={styles.scroll}>
+       <Image style={styles.logo} source={require('../assets/iconPetlyS.png')}/>
+          <FlatList 
+            horizontal
+            style={styles.switcher}
+            data={SWITCER_DATA}
+            keyExtractor={d => d.id.toString()}
+            renderItem={({item}) =>
+              <SwitcherItem
+                isActive={active}
+                id={item.id}
+                title={item.title}
+                onPress={()=>toggleActive(item)}
+                />
+            }
+            /> 
+       </View>
+      <ScrollView>
+      <AppForm
+      initialValues={{pet: "",  dates:{from: "", till: "" }}}
+      onSubmit={handleSubmit}
+     >
+      <ErrorMessage error="You need to fill all fields" visible={failed} />
+      <SelectFromField name="pets" arr={kindOfPet} text="Choose the pet for wich you are ready to look after"/> 
+      <CalendarSeelectField name="dates" tillName="dates.till" fromName="dates.from" text="Pick dates when your are ready to look after the guest pet"/>
+      <SubmitButton title="CONFIRM"/>
+      </AppForm>
+    </ScrollView>   
+    </>
      }
-    </ScrollView>
+     {!firstVisit && 
+     <View style={styles.matchListWrapper}>
+       <Image style={styles.logo} source={require('../assets/iconPetlyS.png')}/>
+       <View style={styles.headWrapper}>
+        <View>
+          <Text style={styles.welcome}>Hello {user.displayName},</Text>
+          <Text style={styles.match}>Pets waiting for you</Text>
+        </View>
+        <Image style={styles.icon} source={require('../assets/iconPetlyS.png')}/>
+       </View>
+       <View style={styles.petSwitcherWrap}>
+        <FlatList 
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            style={styles.petSwitcher}
+            data={SWITCER_PETS}
+            keyExtractor={d => d.id.toString()}
+            renderItem={({item}) =>
+              <SwitcherItem
+                isActive={active}
+                id={item.id}
+                title={item.title}
+                onPress={()=>toggleActive(item)}
+                />
+            }
+            /> 
+       </View>
+       <View style={styles.matchListWrapper}>
+        <FlatList 
+            style={styles.matchList}
+            nestedScrollEnabled={true}
+            data={PROFILE_DATA}
+            keyExtractor={d => d.id.toString()}
+            renderItem={({item}) =>
+            <ListItem
+              name={item.firstNmae}
+              src={item.photoUrl}
+              location={item.location}
+              onPress={()=>console.log("Press")}
+            />
+              }
+              />
+       </View>
+      </View>
+     }
     </Screen >
     </>
- 
   )
 }
 
@@ -127,6 +311,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 10
+  },
+  scroll: {
+   marginTop: 20
   },
   centeredView: {
     flex: 2,
@@ -174,6 +361,52 @@ const styles = StyleSheet.create({
   logo: {
     width: 100,
     height: 100,
-    alignSelf: 'center'
+    alignSelf: 'flex-start'
+  },
+  line: {
+    width: "100%",
+    height: 1,
+    backgroundColor: color.lightGray,
+  },
+  switcher: {
+    alignSelf: 'flex-end',
+  },
+  welcome: {
+    color: color.grayMiddle,
+    paddingHorizontal: 10,
+    fontSize: Platform.OS === "android" ? 14 : 16,
+    fontFamily: Platform.OS === "android" ? "Roboto" : "Avenir",
+  },
+  match: {
+    color: color.text,
+    fontWeight: '700',
+    paddingHorizontal: 10,
+    fontSize: Platform.OS === "android" ? 18 : 20,
+    fontFamily: Platform.OS === "android" ? "Roboto" : "Avenir",
+  },
+  icon: {
+    borderWidth:1,
+    borderColor: color.green,
+    borderRadius: 20,
+    width: 40,
+    height: 40
+  },
+  headWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  petSwitcher: {
+    width: "100%"
+  },
+  petSwitcherWrap: {
+    width: "100%",
+    marginVertical: 20,
+  },
+  // matchList: {
+  //   flexGrow: 1,
+  // },
+  matchListWrapper: {
+    flex: 1
   }
 })

@@ -11,7 +11,7 @@ export default function WelcomeScreen({navigation}) {
     <View style={styles.container}>
       <Image style={styles.image} source={require("../assets/bird.jpg")}/>
       <View style={styles.btn_wrapper}>
-      {/* <MaterialCommunityIcons onPress={() => navigation.navigate("Login")} name="login" size={42} color={colors.mint} /> */}
+      {/* <MaterialCommunityIcons onPress={() => navigation.navigate("Login")} name="login" size={42} color={colors.mint} />  */}
       {/* <MaterialCommunityIcons onPress={() => navigation.navigate("Register")} name="registered-trademark" size={42} color={colors.mint} /> */}
       <Button styleBtn={styles.loginBtn} styleText={styles.loginText} text="LOGIN" onPress={() => navigation.navigate("Login")} name="login" size={42} color={colors.mint}/>
       <Button styleBtn={styles.registerBtn} styleText={styles.loginText} text="REGISTER" onPress={() => navigation.navigate("Register")} name="registered-trademark" size={42} color={colors.mint}/>

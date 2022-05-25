@@ -4,6 +4,7 @@ import CalendarPicker from 'react-native-calendar-picker';
 import colors from '../../config/colors';
 import { useFormikContext } from 'formik';
 import ErrorMessage from './ErrorMessage';
+import color from '../../config/colors';
 
 export default function CalendarSeelectField({name, tillName, fromName, text,  ...otherProps}) {
   const [selectedStartDate, setSelectedStartDate] = useState(false);
@@ -53,18 +54,31 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignSelf: 'center',
     width: "100%",
-    
   },
   container: {
+    width: "99%",
+    alignSelf: 'center',
     marginVertical:20,
     padding:10,
     borderWidth: 2,
-    borderColor: colors.orange,
+    borderColor: color.white,
     borderRadius:15,
+    backgroundColor: 'white',
+    shadowColor: '#171717',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 2,
+    // marginVertical:20,
+    // padding:10,
+    // borderWidth: 2,
+    // borderColor: colors.orange,
+    // borderRadius:15,
   },
   text: {
     fontSize: 12,
     textAlign: "center",
+    color: color.white,
     marginBottom: 10,
     backgroundColor: colors.orange,
     width: "100%",

@@ -9,7 +9,9 @@ export default {
   text: "#424242",
   green: "#39765D",
   orange: "#FEBE67",
-  red: "#FF0000"
+  red: "#FF0000",
+  lightOrange: "#FFC780",
+  grayMiddle: "#ADADAD"
 
   
 }
