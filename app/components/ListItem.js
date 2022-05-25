@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableHighlight, TouchableWithoutFeedback } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import color from '../config/colors';
 import { AirbnbRating } from 'react-native-ratings';
@@ -17,7 +17,7 @@ const ratingCompleted = (rating) => {
 
   return (
     <Swipeable renderRightActions={renderRightActions}>
-      <TouchableHighlight onPress={onPress} underlayColor='#f5f5f5'>
+      <TouchableWithoutFeedback onPress={onPress}>
         <View style={styles.container}>
           <Image style={styles.image} source={{uri: src}}></Image>
           <View style={styles.infoWrapper}>
@@ -31,7 +31,7 @@ const ratingCompleted = (rating) => {
                 defaultRating={3}
                 ratingCount={5}
                 size={15}
-                isDisabled={true}
+                isDisabled={false}
                 showRating={false}
                 onFinishRating={ratingCompleted}
               />
@@ -40,12 +40,12 @@ const ratingCompleted = (rating) => {
               </View>
             </View>
             <View style={styles.iconsWrapper}>
-              <AntDesign style={styles.icon} name="message1" size={20} color={color.green} />
-              <MaterialIcons name="favorite" size={24} color={color.green} />
+              <AntDesign style={styles.icon} name="message1" size={20} color={color.green} onPress={()=>console.log("message")} />
+              <MaterialIcons name="favorite" size={24} color={color.green} onPress={()=>console.log("favorite")} />
             </View>
-          </View>
+          </View>    
         </View>
-      </TouchableHighlight>
+      </TouchableWithoutFeedback>
     </Swipeable>
   )
 }

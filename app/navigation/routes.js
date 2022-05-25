@@ -2,6 +2,9 @@ export default Object.freeze({
   LOGIN: "Login",
   REGISTER: "Register",
   CHAT: "ChatScreen",
-  SETTINGSs: "SettingsScreen",
+  SETTINGS: "SettingsScreen",
   PROFILE: "Profile",
+  REQUESTS: "Requests",
+  OFFERS: "Offers"
+
 });

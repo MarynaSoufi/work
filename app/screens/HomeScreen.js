@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { firestore } from '../firebase/firebase';
 import { useAuth } from '../firebase/auth';
 import { useFirestoreQuery } from '../firebase/useFirestoreQuery';
-import { ActivityIndicator, Screen,  ListItemSeparator, SwitcherItem } from '../components';
+import { ActivityIndicator, Screen, SwitcherItem } from '../components';
 import ListItem from '../components/ListItem';
 import { AppForm, SelectFromField, SubmitButton, CalendarSeelectField, ErrorMessage, MultiSliderField } from '../components/forms';
 import * as Yup from 'yup';
@@ -403,9 +403,6 @@ const styles = StyleSheet.create({
     width: "100%",
     marginVertical: 20,
   },
-  // matchList: {
-  //   flexGrow: 1,
-  // },
   matchListWrapper: {
     flex: 1
   }
