@@ -22,11 +22,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: "100%",
     width: "100%",
-    backgroundColor: color.white,
-    opacity: 0.8,
+    backgroundColor: color.orange,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 1
+    elevation: 5,
+    zIndex: 5,
+    opacity: 0.9,
 
   }
 })

@@ -173,6 +173,7 @@ export default function HomeScreen() {
       await firestore.collection('users').doc(user.uid).update({
         firstVisit: false,
       })
+      setLoading(false);
     }
     catch(error){
       setFailed(true);
@@ -189,8 +190,8 @@ const toggleActive = async (item) => {
   setActive(item.id);
 }
   return (
-    <>
-    <ActivityIndicator visible={loading}/>
+    <> 
+    <ActivityIndicator visible={false}/>
      <Screen style={styles.container} >
      {firstVisit && req &&
      <> 

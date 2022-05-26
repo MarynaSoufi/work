@@ -20,7 +20,7 @@ export function AuthProvider ({ children }) {
   //register(signup)
     
   const register = async (name, email, password) => {
-    const avatarUrl = await storage.ref('l.png').getDownloadURL(); 
+    const avatarUrl = await storage.ref('avatar.png').getDownloadURL(); 
     const response = await auth
       .createUserWithEmailAndPassword(email, password);
        await firestore.collection('users').doc(response.user.uid).set({
@@ -30,6 +30,9 @@ export function AuthProvider ({ children }) {
         image: avatarUrl,
         status: 'online',
         city: '',
+        age: '',
+        firstName: '',
+        lastName: '',
         firstVisit: true,
       })
     return await response.user.updateProfile({
