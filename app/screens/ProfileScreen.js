@@ -68,7 +68,6 @@ export default function ProfileScreen() {
     <ActivityIndicator visible={loading}/>
     <Screen>
       <ScrollView style={styles.container}>
-        {/* <UploadScreen progress={progress} visible={uploadVisible} onDone={() => setUploadVisible(false)}/> */}
        <Text style={styles.text}>Update profile</Text> 
       <AppForm
         initialValues={{userName: currentUser.displayName? currentUser.displayName: "", email: currentUser.email ? currentUser.email : "", password: currentUser.password ? currentUser.pasword : "", firstName: currentUser.firstName ? currentUser.firstName : "", lastName: currentUser.lastName ? currentUser.lastName : "", age: currentUser.age ? currentUser.age : "", avatarImage: ""}}

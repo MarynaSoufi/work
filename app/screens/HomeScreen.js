@@ -156,7 +156,6 @@ export default function HomeScreen() {
   const handleSubmit = async(info) => {
     try {
       setLoading(true);
-      console.log(typeof info.dates.from);
       const request = {
         user: user.uid,
         pet: info.pet,
@@ -166,7 +165,6 @@ export default function HomeScreen() {
         range: +info.range,
         isRequest: req
       };
-      console.log(request);
       let doc = firestore.collection('settings');
       await doc.add(request);
 
@@ -266,7 +264,7 @@ const toggleActive = async (item) => {
           <Text style={styles.welcome}>Hello {user.displayName},</Text>
           <Text style={styles.match}>Pets waiting for you</Text>
         </View>
-        <Image style={styles.icon} source={require('../assets/iconPetlyS.png')}/>
+        <Image style={styles.icon}  source={{uri: user.photoURL}}/>
        </View>
        <View style={styles.petSwitcherWrap}>
         <FlatList 

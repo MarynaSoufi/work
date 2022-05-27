@@ -43,14 +43,14 @@ export default function ImageInput({ onChangeImage, userImage }) {
           {!image &&  userImage !== '' &&
           <View style={styles.wrapper}>
           <Image source={{uri:userImage}} style={styles.image}/> 
-          <MaterialCommunityIcons  style={styles.icon} color={color.green} name="camera" size={42}/>
+          <MaterialCommunityIcons  style={styles.icon} color={color.orange} name="camera" size={42}/>
           </View>}
           {image  && 
           <View style={styles.wrapper}>
           <Image source={{uri:image}} style={styles.image}/>
            <MaterialCommunityIcons style={styles.icon} color={color.white} name="camera" size={42}/>
            </View>}
-          {!image && userImage === '' && <MaterialCommunityIcons color={color.green} name="camera" size={50}/>}
+          {!image && userImage === '' && <MaterialCommunityIcons color={color.green} name="camera" size={42}/>}
         </View>
     </TouchableWithoutFeedback>
    

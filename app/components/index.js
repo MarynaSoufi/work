@@ -5,6 +5,7 @@ import AppFromImagePicker from './AppFromImagePicker.js';
 import  Button from './Button.js';
 import  ImageInput from './ImageInput.js';
 import  ListItemSeparator from './ListItemSeparator.js';
+import  ReqResListItem from './ReqResListItem.js';
 import  SwitcherItem from './SwitcherItem.js';
 import Screen from './Screen.js';
 
@@ -16,6 +17,7 @@ export  {
   Button,
   ImageInput,
   ListItemSeparator,
+  ReqResListItem,
   SwitcherItem,
   Screen
 }

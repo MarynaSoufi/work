@@ -1,13 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableHighlight, TouchableWithoutFeedback } from 'react-native';
-import { Swipeable } from 'react-native-gesture-handler';
+import { StyleSheet, Text, View, Image,  TouchableWithoutFeedback } from 'react-native';
 import color from '../config/colors';
 import { AirbnbRating } from 'react-native-ratings';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { AntDesign } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons'; 
 
-export default function ListItem({src, name,  onPress, renderRightActions, location}) {
+export default function ListItem({src, name,  onPress,  location}) {
 
   const WATER_IMAGE = require('../assets/iconPetlyS.png')
 
@@ -16,7 +15,6 @@ const ratingCompleted = (rating) => {
 }
 
   return (
-    <Swipeable renderRightActions={renderRightActions}>
       <TouchableWithoutFeedback onPress={onPress}>
         <View style={styles.container}>
           <Image style={styles.image} source={{uri: src}}></Image>
@@ -46,7 +44,6 @@ const ratingCompleted = (rating) => {
           </View>    
         </View>
       </TouchableWithoutFeedback>
-    </Swipeable>
   )
 }
 
@@ -60,7 +57,6 @@ const styles = StyleSheet.create({
     backgroundColor: color.white,
     borderWidth: 2,
     borderColor: color.lightGray,
-    // alignItems: 'center',
     height: 100,
     shadowColor: '#171717',
     shadowOffset: {width: 0, height: 2},

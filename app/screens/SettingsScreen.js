@@ -46,7 +46,8 @@ export default function SettingsScreen({ navigation }) {
     <Screen>
       <View style={styles.container}>
        <View style={styles.nameWrapper}>
-        <Image style={styles.icon} source={require('../assets/iconPetlyS.png')}/>
+        {/* <Image style={styles.icon} source={require('../assets/iconPetlyS.png')}/> */}
+        <Image style={styles.icon} source={{uri: user.photoURL}}/>
         <Text style={styles.name}>{user.displayName}</Text>
        </View>
        <FlatList 
