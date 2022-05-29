@@ -36,7 +36,6 @@ console.log('fav', favoriteUsers);
   useEffect(() => {
     setData();
   }, [data])
-  console.log('MATCH=>', match);
 
   const toggleFavorites = async (item) => { 
     const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
