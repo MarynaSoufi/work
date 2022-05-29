@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 
-export default useLocation = () => {
+export default useCity = () => {
   const [location, setLocation] = useState(null);
 
   const getLocation = async () => {
@@ -15,12 +15,11 @@ export default useLocation = () => {
           latitude,
           longitude
         });
-        setLocation({latitude, longitude});
-        // for (let item of response) {
-        //   let address = `${item.name}, ${item.street}, ${item.postalCode}, ${item.city}`;
+        for (let item of response) {
+          let address = `${item.city}`;
     
-        //   setLocation(address);
-        // }
+          setLocation(address);
+        }
       }
       
 

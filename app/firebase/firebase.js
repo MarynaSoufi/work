@@ -3,16 +3,7 @@ import "firebase/compat/auth";
 import secrets from '../config/secret';
 import "firebase/compat/firestore";
 import "firebase/compat/storage";
-import { API_KEY, AUTH_DOMAIN, PROJECT_ID, STORAGEBUCKET, MESSAGING_SENDER_ID, APP_ID} from '@env'
-
-// const app = firebase.initializeApp({
-//   apiKey: secrets.API_KEY,
-//   authDomain: secrets.AUTH_DOMAIN,
-//   projectId: secrets.PROJECT_ID,
-//   storageBucket: secrets.STORAGEBUCKET,
-//   messagingSenderId: secrets.MESSAGING_SENDER_ID,
-//   appId: secrets.APP_ID
-// })
+import { API_KEY, AUTH_DOMAIN, PROJECT_ID, STORAGEBUCKET, MESSAGING_SENDER_ID, APP_ID} from '@env';
 
 const app = firebase.initializeApp({
   apiKey: API_KEY,

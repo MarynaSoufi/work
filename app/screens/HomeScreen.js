@@ -106,18 +106,18 @@ const SWITCER_PETS = [
 const validationSchema = Yup.object().shape({
   pet: Yup.string().required().label("Pet"),
   range: Yup.number().label("Range"),
-  // dates: Yup.object().shape({
-  //   from: Yup.date().required('Mandatory field message').label("From"),
-  //   till: Yup.string().required('Mandatory field message').label("Till"),
-  // }),
+  dates: Yup.object().shape({
+    from: Yup.string().required('Mandatory field message').label("From"),
+    till: Yup.string().required('Mandatory field message').label("Till"),
+  }),
 })
 
 const kindOfPet = [
-{ label: "Dog", value: "Dog" },
-{ label: "Cat", value: "Cat" },
-{ label: "Rodent", value: "Rodent" },
-{ label: "Bird", value: "Bird" },
-{ label: "Fish", value: "Fish" },
+{ label: "Dogs", value: "Dogs" },
+{ label: "Cats", value: "Cats" },
+{ label: "Rodents", value: "Rodents" },
+{ label: "Birds", value: "Birds" },
+{ label: "Fishes", value: "Fishes" },
 { label: "Reptiles", value: "Reptiles" },
 ];
 
@@ -129,13 +129,21 @@ export default function HomeScreen() {
   const location = useLocation();
   const [req, setReq] = useState(true);
   const [active, setActive] = useState(1);
-  const scrollViewRef = useRef();
+  const [offers, setOffers] = useState([]);
+  const [myOffers, setMyOffers] = useState([]);
 
   const { data } = useFirestoreQuery(firestore.collection('users').doc(user.uid));
+  const matches = useFirestoreQuery(firestore.collection('settings'));
+  
+  const setData = () => {
+    setFirstVisit(data?.firstVisit)
+    setOffers(matches.data?.map(i => ({...i})).filter(f=> f.user !== user.uid && f.isRequest === false))
+  }
 
   useEffect(() => {
     setData();
-  }, [data])
+  }, [data, firstVisit, matches.data])
+  // console.log('offers',offers)
 
   const getDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371e3; // metres
@@ -179,14 +187,15 @@ export default function HomeScreen() {
     }
   }
 
-  const setData = () => {
-    setFirstVisit(data?.firstVisit)
-  }
-
 const toggleActive = async (item) => {
   setReq(item.isRequest);
   setActive(item.id);
 }
+const togglePet = (item) => {
+  setActive(item.id);
+  setMyOffers(offers?.filter(f=> f.pet === item.title))
+}
+console.log('myoffers',myOffers)
   return (
     <> 
     <ActivityIndicator visible={false}/>
@@ -214,6 +223,7 @@ const toggleActive = async (item) => {
       <AppForm
       initialValues={{pet: "",  dates:{from: "", till: "" }, range: 5}}
       onSubmit={handleSubmit}
+      validationSchema={validationSchema}
      >
       <ErrorMessage error="You need to fill all fields" visible={failed} />
       <SelectFromField name="pet" arr={kindOfPet} text="Choose your pet to look after"/>
@@ -247,6 +257,7 @@ const toggleActive = async (item) => {
       <AppForm
       initialValues={{pet: "",  dates:{from: "", till: "" }}}
       onSubmit={handleSubmit}
+      validationSchema={validationSchema}
      >
       <ErrorMessage error="You need to fill all fields" visible={failed} />
       <SelectFromField name="pets" arr={kindOfPet} text="Choose the pet for wich you are ready to look after"/> 
@@ -278,7 +289,7 @@ const toggleActive = async (item) => {
                 isActive={active}
                 id={item.id}
                 title={item.title}
-                onPress={()=>toggleActive(item)}
+                onPress={()=>togglePet(item)}
                 />
             }
             /> 
@@ -385,7 +396,6 @@ const styles = StyleSheet.create({
   },
   icon: {
     borderWidth:1,
-    borderColor: color.green,
     borderRadius: 20,
     width: 40,
     height: 40

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, firestore, storage } from './firebase';
+import useCity from '../hooks/useCity';
 
 
 //create a context
@@ -13,6 +14,7 @@ export const useAuth = () => {
 export function AuthProvider ({ children }) {
   const [ user, setUser ] = useState(null);
   const [ loading, setLoading ] = useState(true);
+  const city = useCity();
 
   //login
   const login = (email, password) => auth.signInWithEmailAndPassword(email, password);
@@ -29,11 +31,13 @@ export function AuthProvider ({ children }) {
         email: email,
         image: avatarUrl,
         status: 'online',
-        city: '',
         age: '',
         firstName: '',
         lastName: '',
         firstVisit: true,
+        city: city,
+        rating: '',
+        favoriteUsers:[]
       })
     return await response.user.updateProfile({
       displayName: name,

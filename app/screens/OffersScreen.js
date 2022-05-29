@@ -11,6 +11,18 @@ import { useFirestoreCrud } from '../firebase/useFirestoreCrud';
 import Modal from "react-native-modal";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import useLocation from '../hooks/useLocation';
+import firebase from 'firebase/compat/app';
+import useCity from '../hooks/useCity';
+import * as Yup from 'yup';
+
+const validationSchema = Yup.object().shape({
+  pet: Yup.string().required().label("Pet"),
+  range: Yup.number().label("Range"),
+  dates: Yup.object().shape({
+    from: Yup.string().required('Mandatory field message').label("From"),
+    till: Yup.string().required('Mandatory field message').label("Till"),
+  }),
+})
 
 const kindOfPet = [
   { label: "Dog", value: "Dog" },
@@ -25,6 +37,7 @@ const kindOfPet = [
 export default function OffersScreen() {
   const {user} = useAuth();
   const location = useLocation();
+  const city = useCity();
   const [ requests, setRequests ] = useState([]);
   const [visibleDelete, setVisibleDelete] = useState(false);
   const [visibleAdd, setVisibleAdd] = useState(false);
@@ -33,6 +46,7 @@ export default function OffersScreen() {
   const { deleteDoc } = useFirestoreCrud(firestore.collection('settings'));
   const [failed, setFailed] = useState(false);
   const [loading, setLoading] = useState(false);
+  
 
   
   const setData = () => {
@@ -73,12 +87,20 @@ export default function OffersScreen() {
       setLoading(true);
       const request = {
         user: user.uid,
+        photo: user.photoURL,
+        name: user.displayName,
         pet: info.pet,
         fromDate: info.dates.from.toISOString(),
         tillDate: info.dates.till.toISOString(),
         myLocation: location,
-        isRequest: false
+        isRequest: false,
+        myCity: city
       };
+  //     const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
+  //     const doc = firestore.doc(`users/${user.uid}`);
+  //   doc.update({
+  //     settings: arrayUnion(request)
+  //  });
       let doc = firestore.collection('settings');
       await doc.add(request);
       setVisibleAdd(false);
@@ -92,14 +114,13 @@ export default function OffersScreen() {
 
   return (
     <>
-    <ActivityIndicator visible={loading}/>
     <Screen>
     <Image style={styles.logo} source={require('../assets/iconPetlyS.png')}/>
     <View style={styles.welcomeWrap}>
       <Text style={styles.welcome}>Hello {user.displayName},</Text>
       <Text style={styles.match}>You can see, add or delete your offers</Text>
     </View>
-    <View>
+    <View style={styles.requestsWrapper}>
       <FlatList 
           style={styles.matchList}
           nestedScrollEnabled={true}
@@ -109,8 +130,8 @@ export default function OffersScreen() {
           <ReqResListItem
             from={item.fromDate}
             till={item.tillDate}
-            pet={item.pet}
-            range={item.range}
+            pet={item.pet}  
+            match={false}
             onPress={()=>showDialogDelete(item)}
           />
             }
@@ -139,6 +160,7 @@ export default function OffersScreen() {
     onRequestClose={() => {
       handleCancelAdd()
     }}>
+       <ActivityIndicator visible={loading}/>
       <View style={styles.modalContainer}>
           <Pressable style={styles.press}>
             <MaterialCommunityIcons name="close" size={24} color={color.green} onPress={() => handleCancelAdd()}/>
@@ -147,6 +169,7 @@ export default function OffersScreen() {
             <AppForm
             initialValues={{pet: "",  dates:{from: "", till: "" }}}
             onSubmit={handleAdd}
+            validationSchema={validationSchema}
           >
             <ErrorMessage error="You need to fill all fields" visible={failed} />
             <SelectFromField name="pet" arr={kindOfPet} text="Choose the pet for wich you are ready to look after"/>
@@ -223,5 +246,9 @@ const styles = StyleSheet.create({
   },
   welcomeWrap: {
     marginBottom: 20
+  },
+  requestsWrapper: {
+    marginBottom: 100,
+    paddingBottom: 100,
   }
 })

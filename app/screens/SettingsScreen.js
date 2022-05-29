@@ -83,7 +83,6 @@ const styles = StyleSheet.create({
   },
   icon: {
     borderWidth:1,
-    borderColor: color.green,
     borderRadius: 50,
     width: 100,
     height: 100,

@@ -5,6 +5,7 @@ export default Object.freeze({
   SETTINGS: "SettingsScreen",
   PROFILE: "Profile",
   REQUESTS: "Requests",
-  OFFERS: "Offers"
+  OFFERS: "Offers",
+  MATCH: "Match"
 
 });

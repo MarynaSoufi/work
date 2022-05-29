@@ -5,10 +5,13 @@ import { AirbnbRating } from 'react-native-ratings';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { AntDesign } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons'; 
+import { Ionicons } from '@expo/vector-icons'; 
 
-export default function ListItem({src, name,  onPress,  location}) {
+export default function ListItem({src, name,  onPress,  location, setFavorite, isFavorite}) {
 
-  const WATER_IMAGE = require('../assets/iconPetlyS.png')
+  const functionCombined = async () => {
+    await setFavorite();
+  }
 
 const ratingCompleted = (rating) => {
   console.log("Rating is: " + rating)
@@ -39,7 +42,10 @@ const ratingCompleted = (rating) => {
             </View>
             <View style={styles.iconsWrapper}>
               <AntDesign style={styles.icon} name="message1" size={20} color={color.green} onPress={()=>console.log("message")} />
-              <MaterialIcons name="favorite" size={24} color={color.green} onPress={()=>console.log("favorite")} />
+              <TouchableWithoutFeedback onPress={functionCombined}>
+                {isFavorite ? (<Ionicons name="paw" size={24} color={color.green} />) :
+                (<Ionicons name="paw-outline" size={24} color={color.green}/>)}
+              </TouchableWithoutFeedback>
             </View>
           </View>    
         </View>

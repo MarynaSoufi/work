@@ -15,19 +15,19 @@ export default function CalendarSeelectField({name, tillName, fromName, text,  .
     //function to handle the date change
     if (type === 'END_DATE') {
       setSelectedEndDate(date);
-      setFieldValue( fromName, date);
+      setFieldValue( tillName, date);
  
     } else {
       setSelectedEndDate(null);
       setSelectedStartDate(date);
-      setFieldValue(tillName, date);
+      setFieldValue(fromName, date);
  
     }
   };
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{text}</Text>
-      <ErrorMessage error={errors[tillName]} visible={touched[tillName]}/>
+      <ErrorMessage error={errors?.dates?.till} visible={errors?.dates?.till}/>
       <View style={styles.wrapper}>
       <CalendarPicker
         startFromMonday={true}

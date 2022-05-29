@@ -11,6 +11,18 @@ import { useFirestoreCrud } from '../firebase/useFirestoreCrud';
 import Modal from "react-native-modal";
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import useLocation from '../hooks/useLocation';
+import * as Yup from 'yup';
+import useCity from '../hooks/useCity';
+
+const validationSchema = Yup.object().shape({
+  pet: Yup.string().required().label("Pet"),
+  range: Yup.number().label("Range"),
+  dates: Yup.object().shape({
+    from: Yup.string().required('Mandatory field message').label("From"),
+    till: Yup.string().required('Mandatory field message').label("Till"),
+  }),
+})
+
 
 const kindOfPet = [
   { label: "Dog", value: "Dog" },
@@ -24,17 +36,26 @@ const kindOfPet = [
 export default function RequestsScreen() {
   const {user} = useAuth();
   const location = useLocation();
+  const city = useCity();
   const [ requests, setRequests ] = useState([]);
   const [visibleDelete, setVisibleDelete] = useState(false);
   const [visibleAdd, setVisibleAdd] = useState(false);
   const [itemId, setItemId] = useState('');
-  const { data } = useFirestoreQuery(firestore.collection('settings'));
   const { deleteDoc } = useFirestoreCrud(firestore.collection('settings'));
   const [failed, setFailed] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [ currentUser, setCurrentUser ] = useState([]);
+
+  const { data } = useFirestoreQuery(firestore.collection('settings'));
+  const usersData = useFirestoreQuery(firestore.collection('users'))
 
   const setData = () => {
     setRequests(data?.map(i => ({...i})).filter(f=> f.isRequest === true && f.user === user.uid))
+    const users = usersData.data?.map(i => ({...i}));
+    if(users){
+      const userFound = users.find(i => i.id === user.uid);
+      setCurrentUser(userFound);
+    }
   }
 
   useEffect(() => {
@@ -67,16 +88,20 @@ export default function RequestsScreen() {
   };
 
   const handleAdd = async (info) => {
+    console.log('info=>', info)
       try {
         setLoading(true);
         const request = {
           user: user.uid,
+          photo: user.photoURL,
+          name: user.displayName,
           pet: info.pet,
           fromDate: info.dates.from.toISOString(),
           tillDate: info.dates.till.toISOString(),
           myLocation: location,
           range: +info.range,
-          isRequest: true
+          isRequest: true,
+          myCity: city
         };
         let doc = firestore.collection('settings');
         await doc.add(request);
@@ -90,14 +115,14 @@ export default function RequestsScreen() {
   }
     return (
       <>
-        <ActivityIndicator visible={loading}/>
+        {/* <ActivityIndicator visible={loading}/> */}
         <Screen>
         <Image style={styles.logo} source={require('../assets/iconPetlyS.png')}/>
         <View style={styles.welcomeWrap}>
           <Text style={styles.welcome}>Hello {user.displayName},</Text>
           <Text style={styles.match}>You can see, add or delete your requests</Text>
         </View>
-        <View>
+        <View style={styles.requestsWrapper}>
           <FlatList 
               style={styles.matchList}
               nestedScrollEnabled={true}
@@ -109,6 +134,7 @@ export default function RequestsScreen() {
                 till={item.tillDate}
                 pet={item.pet}
                 range={item.range}
+                match={false}
                 onPress={()=>showDialogDelete(item)}
               />
                 }
@@ -137,6 +163,7 @@ export default function RequestsScreen() {
         onRequestClose={() => {
           handleCancelAdd()
         }}>
+          <ActivityIndicator visible={loading}/>
           <View style={styles.modalContainer}>
               <Pressable style={styles.press}>
                 <MaterialCommunityIcons name="close" size={24} color={color.green} onPress={() => handleCancelAdd()}/>
@@ -145,6 +172,7 @@ export default function RequestsScreen() {
                 <AppForm
                 initialValues={{pet: "",  dates:{from: "", till: "" }, range: 5}}
                 onSubmit={handleAdd}
+                validationSchema={validationSchema}
               >
                 <ErrorMessage error="You need to fill all fields" visible={failed} />
                 <SelectFromField name="pet" arr={kindOfPet} text="Choose your pet to look after"/>
@@ -156,9 +184,7 @@ export default function RequestsScreen() {
           </View>
     </Modal>
       </Screen>
-      </>
-      
-  
+    </>
   )
 }
 
@@ -224,5 +250,9 @@ const styles = StyleSheet.create({
   },
   welcomeWrap: {
     marginBottom: 20
+  },
+  requestsWrapper: {
+    marginBottom: 100,
+    paddingBottom: 100,
   }
 })

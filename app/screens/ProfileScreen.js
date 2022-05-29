@@ -36,10 +36,9 @@ export default function ProfileScreen() {
 
   const handleSubmit = async(info) => {
     setLoading(true);
-    console.log('Submit')
     const path = `avarats/${user.uid}/avatar.jpg`;
-
-    const response =  await fetch(info.avatarImage);
+    if(info.avatarImage) {
+      const response =  await fetch(info.avatarImage);
       const file =  await response.blob();
       storage.ref(path).put(file).then(
         async (snapshot) => {
@@ -52,7 +51,8 @@ export default function ProfileScreen() {
           });
         }
       );
-
+    }
+    
       await firestore.collection('users').doc(user.uid).update({
         displayName: info.userName !== "" ? info.userName : currentUser.displayName,
         email: info.email !== "" ? info.email : currentUser.email,

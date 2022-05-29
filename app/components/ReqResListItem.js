@@ -10,15 +10,9 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons'; 
 
 
-export default function ReqResListItem({from, till, pet, range, onPress}) {
+export default function ReqResListItem({from, till, pet, range, onPress, match, onMatchPress}) {
   const fromDate = new Date(from);
   const tillDate = new Date(till);
-  const fromMonth = fromDate.getMonth() <=9 ? '0' + fromDate.getMonth() : fromDate.getMonth();
-  const fromDay = fromDate.getDate() <=9 ? '0' + fromDate.getDate() : fromDate.getDate();
-  const tillMonth = tillDate.getDate() <=9 ? '0' + tillDate.getDate() : tillDate.getDate();
-  const tillDay = tillDate.getDate() <=9 ? '0' + tillDate.getDate() : tillDate.getDate();
-  const fromNewDate = fromDate.getFullYear() + '/' + fromMonth + '/' + fromDay;
-  const tillNewDate = tillDate.getFullYear() + '/' + tillMonth + '/' + tillDay;
   return (
       <TouchableWithoutFeedback>
         <View style={styles.container}>
@@ -32,7 +26,7 @@ export default function ReqResListItem({from, till, pet, range, onPress}) {
             <View style={styles.infoWrapper}>
                 <View style={styles.datesWrapper}>
                   <MaterialIcons name="date-range" size={24} color={color.green} />
-                  <Text style={styles.dates}>{fromNewDate} - {tillNewDate}</Text>
+                  <Text style={styles.dates}>{fromDate.toLocaleDateString()} - {tillDate.toLocaleDateString()}</Text>
                 </View>
                 {range && <View style={styles.rangeWrapper}>
                 <FontAwesome name="map-marker" size={18} color={color.green} />
@@ -40,7 +34,9 @@ export default function ReqResListItem({from, till, pet, range, onPress}) {
                 </View>}
             </View>
           </View>
-          <Ionicons name="md-trash" size={24} color={color.green} onPress={onPress}/>
+          {match === false && <Ionicons name="md-trash" size={24} color={color.green} onPress={onPress}/>}
+          {match === true && <MaterialCommunityIcons name="puzzle-check" size={24} color={color.orange} onPress={onMatchPress}/>}
+          
         </View>
       </TouchableWithoutFeedback>
   )
