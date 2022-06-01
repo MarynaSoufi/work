@@ -5,7 +5,6 @@ import { AirbnbRating } from 'react-native-ratings';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { AntDesign } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons'; 
-import { Ionicons } from '@expo/vector-icons'; 
 
 export default function ListItem({src, name,  onPress,  location, setFavorite, isFavorite}) {
 
@@ -36,15 +35,15 @@ const ratingCompleted = (rating) => {
                 showRating={false}
                 onFinishRating={ratingCompleted}
               />
-              <View style={styles.reviewsWrapper}>
+              {/* <View style={styles.reviewsWrapper}>
                 <Text style={styles.reviews}>Reviews(1)</Text>
-              </View>
+              </View> */}
             </View>
             <View style={styles.iconsWrapper}>
               <AntDesign style={styles.icon} name="message1" size={20} color={color.green} onPress={()=>console.log("message")} />
               <TouchableWithoutFeedback onPress={functionCombined}>
-                {isFavorite ? (<Ionicons name="paw" size={24} color={color.green} />) :
-                (<Ionicons name="paw-outline" size={24} color={color.green}/>)}
+                {isFavorite ? (<MaterialIcons name="favorite" size={24} color={color.green} />) :
+                (<MaterialIcons name="favorite-border" size={24} color={color.green} />)}
               </TouchableWithoutFeedback>
             </View>
           </View>    
@@ -73,7 +72,7 @@ const styles = StyleSheet.create({
   },
   textWrapper: {
   marginHorizontal: 15,
-  marginVertical: 10
+  marginVertical: 20
   },
   image: {
     width: 100,

@@ -143,7 +143,6 @@ export default function HomeScreen() {
   useEffect(() => {
     setData();
   }, [data, firstVisit, matches.data])
-  // console.log('offers',offers)
 
   const getDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371e3; // metres

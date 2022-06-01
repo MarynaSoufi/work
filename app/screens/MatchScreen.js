@@ -22,7 +22,9 @@ export default function MatchScreen({ route, navigation }) {
   const usersData = useFirestoreQuery(firestore.collection('users'));
 
   const setData = () => {
-    setMatch(data?.map(i => ({...i})).filter(f=> f.user !== user.uid && f.isRequest === false && f.pet === dataItem.pet && f.fromDate <= dataItem.fromDate && f.tillDate >= dataItem.tillDate))
+    // setMatch(data?.map(i => ({...i})).filter(f=> f.user !== user.uid && f.isRequest === false && f.pet === dataItem.pet && f.fromDate <= dataItem.fromDate && f.tillDate >= dataItem.tillDate && getDistance(dataItem.latitude, dataItem.longtitude, f.latitude, f.longtitude) <= dataItem.range ))
+    setMatch(data?.map(i => ({...i})).filter(f=> f.user !== user.uid && f.isRequest === false && f.pet === dataItem.pet && f.fromDate <= dataItem.fromDate && f.tillDate >= dataItem.tillDate ))
+
     // const d = getDistance(51.209348, 3.224700, 51.0376144, 3.7978799 );
     // console.log('dist', d)
     const users = usersData.data?.map(i => ({...i}));
@@ -32,17 +34,16 @@ export default function MatchScreen({ route, navigation }) {
       setFavoriteUsers(userFound?.favoriteUsers);
     }
   }
-console.log('fav', favoriteUsers);
   useEffect(() => {
     setData();
-  }, [data])
+  }, [data, usersData.data])
 
   const toggleFavorites = async (item) => { 
     const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
     const arrayRemove = firebase.firestore.FieldValue.arrayRemove;
     const doc = firestore.doc(`users/${user.uid}`);
     if (favoriteUsers) {
-    
+    console.log('remove')
     if(favoriteUsers?.includes(item.id)){
       await doc.update({
         favoriteUsers: arrayRemove(item.id)
@@ -67,10 +68,10 @@ console.log('fav', favoriteUsers);
        <Image style={styles.logo} source={require('../assets/iconPetlyS.png')}/>
        <View style={styles.headWrapper}>
         <View>
-          <Text style={styles.welcome}>Hello {user.displayName},</Text>
-          <Text style={styles.match}>Pets waiting for you</Text>
+          <Text style={styles.welcome}>Hello {currentUser.displayName},</Text>
+          <Text style={styles.match}>Explore your matches</Text>
         </View>
-        <Image style={styles.icon}  source={{uri: user.photoURL}}/>
+        <Image style={styles.icon}  source={{uri: currentUser.image}}/>
        </View>
        {match?.length > 0 &&      
        <View style={styles.matchListWrapper}>
@@ -81,7 +82,7 @@ console.log('fav', favoriteUsers);
             keyExtractor={d => d.id.toString()}
             renderItem={({item}) =>
             <ListItem
-            isFavorite={!!favoriteUsers?.find(fr => fr === item.id)}
+              isFavorite={!!favoriteUsers?.find(fr => fr === item.id)}
               name={item.name}
               src={item.photo}
               location={item.myCity}

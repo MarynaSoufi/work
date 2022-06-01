@@ -8,95 +8,32 @@ import color from '../config/colors';
 import useLocation from '../hooks/useLocation';
 import routes from '../navigation/routes';
 
-const PROFILE_DATA = [
-  {
-    id: 1,
-    firstNmae: "Marry",
-    lastName: "Soufi",
-    location: "Brussel",
-    photoUrl: "https://avatars.githubusercontent.com/u/70641421?v=4",
-    age: 31,
-  },
-  {
-    id: 2,
-    firstNmae: "Aiden",
-    lastName: "Soufi",
-    location: "Ghent",
-    photoUrl: "https://avatars.githubusercontent.com/u/68068622?s=120&v=4",
-    age: 34,
-  },
-  {
-    id: 3,
-    firstNmae: "Maryna",
-    lastName: "Soufi",
-    location: "Brugge",
-    photoUrl: "https://www.zmoji.me/wp-content/uploads/2019/11/5-Incredible-Avatar-Maker-Free-Tools-You%E2%80%99ve-Missed-Before.jpg",
-    age: 31,
-  },
-  {
-    id: 4,
-    firstNmae: "Maryna",
-    lastName: "Soufi",
-    location: "Brugge",
-    photoUrl: "https://www.zmoji.me/wp-content/uploads/2019/11/5-Incredible-Avatar-Maker-Free-Tools-You%E2%80%99ve-Missed-Before.jpg",
-    age: 31,
-  },
-  {
-    id: 5,
-    firstNmae: "Maryna",
-    lastName: "Soufi",
-    location: "Brugge",
-    photoUrl: "https://www.zmoji.me/wp-content/uploads/2019/11/5-Incredible-Avatar-Maker-Free-Tools-You%E2%80%99ve-Missed-Before.jpg",
-    age: 31,
-  },
-  {
-    id: 6,
-    firstNmae: "Maryna",
-    lastName: "Soufi",
-    location: "Brugge",
-    photoUrl: "https://www.zmoji.me/wp-content/uploads/2019/11/5-Incredible-Avatar-Maker-Free-Tools-You%E2%80%99ve-Missed-Before.jpg",
-    age: 31,
-  }
-]
-
-
-const kindOfPet = [
-{ label: "Dogs", value: "Dogs" },
-{ label: "Cats", value: "Cats" },
-{ label: "Rodents", value: "Rodents" },
-{ label: "Birds", value: "Birds" },
-{ label: "Fishes", value: "Fishes" },
-{ label: "Reptiles", value: "Reptiles" },
-];
 
 export default function MainScreen({navigation}) {
   const { user } = useAuth();
-  const [ firstVisit, setFirstVisit ] = useState(true);
+  const [ currentUser, setCurrentUser ] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [failed, setFailed] = useState(false);
-  const location = useLocation();
-  const [req, setReq] = useState(true);
-  const [active, setActive] = useState(1);
-  const [offers, setOffers] = useState([]);
-  const [myOffers, setMyOffers] = useState([]);
   const [ requests, setRequests ] = useState([]);
 
   const { data } = useFirestoreQuery(firestore.collection('settings'));
 
+  const usersData = useFirestoreQuery(firestore.collection('users'))
+
   const setData = () => {
-    setRequests(data?.map(i => ({...i})).filter(f=> f.isRequest === true && f.user === user.uid))
-    // firestore.collection('users')
-    // .doc(user?.uid)
-    // .onSnapshot(snapshot => setMyOffers(snapshot.data()))
-  
+    setRequests(data?.map(i => ({...i})).filter(f=> f.isRequest === true && f.user === user.uid));
+    const users = usersData.data?.map(i => ({...i}));
+    if(users){
+      const userFound = users.find(i => i.id === user.uid);
+      setCurrentUser(userFound);
+    }
+    
   }
 
   useEffect(() => {
     setData();
-  }, [data])
+  }, [data, usersData.data])
 
 const handleMatch = (item) => {
-  console.log(item.id);
   navigation.navigate(routes.MATCH, item)
 }
   return (
@@ -107,10 +44,10 @@ const handleMatch = (item) => {
        <Image style={styles.logo} source={require('../assets/iconPetlyS.png')}/>
        <View style={styles.headWrapper}>
         <View>
-          <Text style={styles.welcome}>Hello {user.displayName},</Text>
-          <Text style={styles.match}>Pets waiting for you</Text>
+          <Text style={styles.welcome}>Hello { currentUser?.displayName},</Text>
+          <Text style={styles.match}>Explore your requests</Text>
         </View>
-        <Image style={styles.icon}  source={{uri: user.photoURL}}/>
+        <Image style={styles.icon}  source={{uri:  currentUser?.image}}/>
        </View>
        {requests?.length < 1 && 
         <View>

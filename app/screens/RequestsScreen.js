@@ -60,7 +60,7 @@ export default function RequestsScreen() {
 
   useEffect(() => {
     setData();
-  }, [data])
+  }, [data, usersData.data])
 
   const showDialogDelete = (item) => {
     setItemId(item.id);
@@ -88,7 +88,6 @@ export default function RequestsScreen() {
   };
 
   const handleAdd = async (info) => {
-    console.log('info=>', info)
       try {
         setLoading(true);
         const request = {
@@ -119,7 +118,7 @@ export default function RequestsScreen() {
         <Screen>
         <Image style={styles.logo} source={require('../assets/iconPetlyS.png')}/>
         <View style={styles.welcomeWrap}>
-          <Text style={styles.welcome}>Hello {user.displayName},</Text>
+          <Text style={styles.welcome}>Hello {currentUser.displayName},</Text>
           <Text style={styles.match}>You can see, add or delete your requests</Text>
         </View>
         <View style={styles.requestsWrapper}>
