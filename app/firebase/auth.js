@@ -18,8 +18,6 @@ export function AuthProvider ({ children }) {
 
   //login
   const login = (email, password) => auth.signInWithEmailAndPassword(email, password);
-
-  //register(signup)
     
   const register = async (name, email, password) => {
     const avatarUrl = await storage.ref('avatar.png').getDownloadURL(); 
@@ -36,8 +34,10 @@ export function AuthProvider ({ children }) {
         lastName: '',
         firstVisit: true,
         city: city,
-        rating: '',
-        favoriteUsers:[]
+        rating: [],
+        favoriteUsers:[],
+        myChats: [],
+        user: response.user.uid
       })
     return await response.user.updateProfile({
       displayName: name,

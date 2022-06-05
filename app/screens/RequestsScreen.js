@@ -92,8 +92,8 @@ export default function RequestsScreen() {
         setLoading(true);
         const request = {
           user: user.uid,
-          photo: user.photoURL,
-          name: user.displayName,
+          image: user.photoURL,
+          displayName: user.displayName,
           pet: info.pet,
           fromDate: info.dates.from.toISOString(),
           tillDate: info.dates.till.toISOString(),

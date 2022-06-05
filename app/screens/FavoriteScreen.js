@@ -4,8 +4,9 @@ import { firestore } from '../firebase/firebase';
 import ListItem from '../components/ListItem';
 import { useAuth } from '../firebase/auth';
 import { useFirestoreQuery } from '../firebase/useFirestoreQuery';
-import { ActivityIndicator, Screen } from '../components';
+import { Screen } from '../components';
 import color from '../config/colors';
+import firebase from 'firebase/compat/app';
 
 
 export default function FavoriteScreen() {
@@ -22,8 +23,19 @@ export default function FavoriteScreen() {
 
   const setData = () => {
     setFavoriteUsers(data?.favoriteUsers);
-    const favoriteUser = favoriteData.data?.map(i => ({...i}));
-    setFavoriteUsersData(favoriteUser?.filter(f => favoriteUsers.includes(f.id)));
+    setFavoriteUsersData(favoriteData.data?.map(i => {
+      const setting = {...i};
+      if(usersData?.data){
+        const foundUser = usersData.data.find(u => u.id === i.user);
+        if(foundUser){
+          setting.rating = foundUser.rating.reduce((a, b) => a + b, 0) / foundUser.rating.length;
+        } else {
+          setting.rating = 3;
+        }
+      }
+      return setting;
+    })
+    .filter(f => favoriteUsers.includes(f.id)))
     const users = usersData.data?.map(i => ({...i}));
     if(users){
       const userFound = users.find(i => i.id === user.uid);
@@ -80,17 +92,18 @@ export default function FavoriteScreen() {
             renderItem={({item}) =>
             <ListItem
               isFavorite={!!favoriteUsers?.find(fr => fr === item.id)}
-              name={item.name}
-              src={item.photo}
+              name={item.displayName}
+              rating={item.rating}
+              src={item.image}
               location={item.myCity}
               setFavorite={async () => await toggleFavorites(item)}
             />
               }
               />
        </View>}
-       {favoriteUsers?.length < 1 &&
-        <View>
-        <Text>You don't have any favories!</Text>
+       {favoriteUsersData?.length < 1 &&
+        <View style={styles.noFavorites}>
+        <Text style={styles.noFavoritesText}>You don't have any favories!</Text>
        </View>}
   
      </View>  
@@ -138,6 +151,17 @@ const styles = StyleSheet.create({
     fontSize: Platform.OS === "android" ? 18 : 20,
     fontFamily: Platform.OS === "android" ? "Roboto" : "Avenir",
   },
+  noFavorites: {
+    flex: 1,
+    alignSelf: 'center',
+  },
+  noFavoritesText: {
+    color: color.orange,
+    fontWeight: '700',
+    paddingHorizontal: 10,
+    fontSize: Platform.OS === "android" ? 22 : 24,
+    fontFamily: Platform.OS === "android" ? "Roboto" : "Avenir",
+  }
 })
 
 

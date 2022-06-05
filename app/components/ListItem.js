@@ -6,7 +6,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons'; 
 
-export default function ListItem({src, name,  onPress,  location, setFavorite, isFavorite}) {
+export default function ListItem({src, name, rating,  onPress,  location, setFavorite, isFavorite, onMessage}) {
 
   const functionCombined = async () => {
     await setFavorite();
@@ -28,7 +28,7 @@ const ratingCompleted = (rating) => {
               </View>
               <Text style={styles.name}>{name}</Text>
               <AirbnbRating
-                defaultRating={3}
+                defaultRating={rating}
                 ratingCount={5}
                 size={15}
                 isDisabled={false}
@@ -40,7 +40,7 @@ const ratingCompleted = (rating) => {
               </View> */}
             </View>
             <View style={styles.iconsWrapper}>
-              <AntDesign style={styles.icon} name="message1" size={20} color={color.green} onPress={()=>console.log("message")} />
+              <AntDesign style={styles.icon} name="message1" size={20} color={color.green} onPress={onMessage} />
               <TouchableWithoutFeedback onPress={functionCombined}>
                 {isFavorite ? (<MaterialIcons name="favorite" size={24} color={color.green} />) :
                 (<MaterialIcons name="favorite-border" size={24} color={color.green} />)}
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 1,
     elevation: 2,
-    marginBottom: 10
+    marginBottom: 20
   },
   textWrapper: {
   marginHorizontal: 15,

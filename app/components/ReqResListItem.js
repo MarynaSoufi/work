@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     elevation: 2,
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 20
+    marginBottom: 20
   },
   datesWrapper: {
     flexDirection: 'row',

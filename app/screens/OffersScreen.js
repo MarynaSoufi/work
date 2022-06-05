@@ -87,14 +87,14 @@ export default function OffersScreen() {
       setLoading(true);
       const request = {
         user: user.uid,
-        photo: user.photoURL,
-        name: user.displayName,
+        image: user.photoURL,
+        displayName: user.displayName,
         pet: info.pet,
         fromDate: info.dates.from.toISOString(),
         tillDate: info.dates.till.toISOString(),
         myLocation: location,
         isRequest: false,
-        myCity: city
+        myCity: city,
       };
   //     const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
   //     const doc = firestore.doc(`users/${user.uid}`);

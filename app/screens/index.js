@@ -3,6 +3,7 @@ import FavoriteScreen from './FavoriteScreen.js';
 import HomeScreen from './HomeScreen.js';
 import LoginScreen from './LoginScreen.js';
 import MainScreen from './MainScreen.js';
+import MessageScreen from './MessageScreen.js';
 import MatchScreen from './MatchScreen.js';
 import OffersScreen from './OffersScreen.js';
 import OnboardingScreen from './OnboardingScreen.js';
@@ -18,6 +19,7 @@ export {
   HomeScreen,
   LoginScreen,
   MainScreen,
+  MessageScreen,
   MatchScreen,
   OffersScreen,
   OnboardingScreen,

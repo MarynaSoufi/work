@@ -8,6 +8,8 @@ import AuthNavigator from './app/navigation/AuthNavigator';
 import  AppNavigator from './app/navigation/AppNavigator';
 import { useAuth, AuthProvider } from './app/firebase/auth';
 import 'react-native-gesture-handler';
+import cache from './app/utils/cache';
+import NetInfo from "@react-native-community/netinfo";
 import ignoreWarnings from 'ignore-warnings';
 
 
@@ -30,6 +32,19 @@ LogBox.ignoreLogs([
 
 function AppContent() {
   const {user} = useAuth();
+
+  NetInfo.addEventListener(async (handler) => {
+    if (handler.isInternetReachable){
+      const allKeys = await cache.keys();
+      allKeys.forEach( async key => {
+        const message = await cache.get(key);
+        if(key.startsWith(cache.privateKey)){
+          firestore.collection('chatMessages').doc(key).collection('messages').add(message);
+          await cache.remove(key);
+        }
+      });
+    }
+  }) 
 
   return (
     <>

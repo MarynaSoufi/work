@@ -50,8 +50,8 @@ const handleMatch = (item) => {
         <Image style={styles.icon}  source={{uri:  currentUser?.image}}/>
        </View>
        {requests?.length < 1 && 
-        <View>
-          <Text>You have not any requests yet</Text>
+        <View style={styles.noRequests}>
+          <Text style={styles.noRequestsText}>You have not any requests yet</Text>
         </View>}
         {requests?.length > 0 && 
        <View style={styles.requestsWrapper}>
@@ -180,7 +180,18 @@ const styles = StyleSheet.create({
   requestsWrapper: {
     marginBottom: 100,
     paddingBottom: 100,
-    marginTop: 20,
     paddingTop: 20,
+  },
+  noRequests: {
+    flex: 1,
+    alignSelf: 'center',
+    paddingTop: "50%"
+  },
+  noRequestsText: {
+    color: color.orange,
+    fontWeight: '700',
+    paddingHorizontal: 10,
+    fontSize: Platform.OS === "android" ? 22 : 24,
+    fontFamily: Platform.OS === "android" ? "Roboto" : "Avenir",
   }
 })
