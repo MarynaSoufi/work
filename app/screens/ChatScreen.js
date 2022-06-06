@@ -3,10 +3,11 @@ import React, { useEffect, useRef, useState } from 'react'
 import firebase from 'firebase/compat/app';
 import { useAuth } from '../firebase/auth';
 import color from '../config/colors';
-import { Screen, Button, Message, ListItemSeparator, ActivityIndicator , ListChats} from '../components';
+import { Screen, Button, Message, ListItemSeparator, ActivityIndicator , ListChats, ListItemDeleteAction} from '../components';
 import { firestore } from '../firebase/firebase';
 import { useFirestoreQuery } from '../firebase/useFirestoreQuery';
 import routes from '../navigation/routes';
+import Dialog from "react-native-dialog";
 
 const extra = "Hello World!"
 export default function ChatScreen({ route, navigation }) {
@@ -17,12 +18,12 @@ export default function ChatScreen({ route, navigation }) {
   const [myChats, setMyChats] = useState([]);
   const [chats, setChats] = useState([]);
   const componentMounted = useRef(true);
+  const [visibleDelete, setVisibleDelete] = useState(false);
+  const [itemId, setItemId] = useState('');
 
   const { data } = useFirestoreQuery(firestore.collection('users'));
-
-  useEffect(() => {
-    setData()
-  }, [data])
+  const arrayRemove = firebase.firestore.FieldValue.arrayRemove;
+  const doc = firestore.doc(`users/${user.uid}`);
 
   const setData = () => {
     const users = data;
@@ -33,6 +34,29 @@ export default function ChatScreen({ route, navigation }) {
         setChats(users.filter(f=> userFound.myChats?.includes(f.user)))
       }      
     }
+  }
+
+  useEffect(() => {
+    setData()
+  }, [data])
+  
+  const handleDelete = async () => {
+    await doc.update({
+      myChats: arrayRemove(itemId)
+    });    
+    setItemId('');
+    setVisibleDelete(false);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+  }
+
+  const showDialogDelete = (item) => {
+    setItemId(item.user);
+    setVisibleDelete(true);
+  };
+
+  
+  const handleCancelDelete = () => {
+    setVisibleDelete(false);
+    setItemId('');
   }
 
   return (
@@ -62,12 +86,24 @@ export default function ChatScreen({ route, navigation }) {
                   item,
                 },
               })}
+              renderRightActions={() => <ListItemDeleteAction text="delete-forever" size={24} color={color.green} onPress={() => showDialogDelete(item)}/>}
               />
            }
             ItemSeparatorComponent={() =>
               <ListItemSeparator style={styles.line}/>
             }
           />
+        </View>
+        <View style={styles.modal}>
+          <Button title="Show dialog" onPress={showDialogDelete} />
+          <Dialog.Container visible={visibleDelete}>
+            <Dialog.Title>Delete chat</Dialog.Title>
+            <Dialog.Description>
+              Do you want to delete this chat? You cannot undo this action.
+            </Dialog.Description>
+            <Dialog.Button label="Cancel" onPress={handleCancelDelete} />
+            <Dialog.Button label="Delete" onPress={handleDelete} />
+          </Dialog.Container>
         </View>
     </Screen>
   )
@@ -106,6 +142,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     fontSize: Platform.OS === "android" ? 18 : 20,
     fontFamily: Platform.OS === "android" ? "Roboto" : "Avenir",
+  },
+  modal: {
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
  
 })

@@ -24,6 +24,8 @@ export default function MessageScreen({ route, navigation }) {
     chat = route.params
   }
 
+
+
   const componentMounted = useRef(true);
   const {user} = useAuth();
   const scrollViewRef = useRef();
@@ -33,6 +35,7 @@ export default function MessageScreen({ route, navigation }) {
   const [visibleLocation, setVisibleLocation] = useState(false);
   const [chatMesages, setChatMesages] = useState([]);
   const [ currentUser, setCurrentUser ] = useState([]);
+  const [ chaTRecipient, setChaTRecipient] = useState([])
   const location = useAddress();
   const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
   const doc = firestore.doc(`users/${user.uid}`);
@@ -46,12 +49,8 @@ export default function MessageScreen({ route, navigation }) {
     if(users){
       const userFound = users.find(i => i.id === user.uid);
       setCurrentUser(userFound);
+      setChaTRecipient(users.find(i => i.id === chat?.user));
     }
-  }
-
-  useEffect(() => {
-    setData()
-    if (componentMounted.current){
     firestore.collection('chatMessages')
     .doc(messagesId)
     .collection('messages')
@@ -59,8 +58,39 @@ export default function MessageScreen({ route, navigation }) {
     .onSnapshot(snapshot => {
       setChatMesages(snapshot.docs.map(doc => doc.data()))
     })
-    }
+  }
+
+  useEffect(() => {
+    setData()
   }, [messagesId, usersData.data])
+
+  
+  const sendPushNotification = (token, title, body) => {
+    return fetch('https://exp.host/--/api/v2/push/send', {
+      body: JSON.stringify({
+        to: token,
+        title: title,
+        body: body,
+        data: { message: `${title} - ${body}` },
+        sound: "default",
+        icon: "./assets/icon.png",
+        android:{
+            icon: "./assets/icon.png",
+            sound:"default"
+        }
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      // data: {
+      //   "screen":  navigation.navigate('ChatScreen')
+      //   }
+    },
+    // navigation.navigate('ChatScreen')
+    );
+  
+}
 
   const handlePress = async () => {
     let id = uuid.v4();
@@ -82,17 +112,21 @@ export default function MessageScreen({ route, navigation }) {
         } else {
           cache.store(`${cache.privateKey}:${messagesId}`, messageRequest);
         }  
-        if(chatMesages.length === 0) {
-          await doc.update({
-            myChats: arrayUnion(chat.user)
-          });
+
+        if(!chaTRecipient.myChats.includes(user.uid)) {
           await chatDoc.update({
             myChats: arrayUnion(user.uid)
           });
+        } else if (!currentUser.myChats.includes(chat.user)) {
+          await doc.update({
+            myChats: arrayUnion(chat.user)
+          });
         }
-        onChangeText('');
+        
         setLoading(false);
       }
+      // sendPushNotification(chat.expoPushToken, user.displayName, text);
+      onChangeText('');
     }
   }
 
@@ -116,12 +150,13 @@ export default function MessageScreen({ route, navigation }) {
               sendTo: chat?.displayName,
               senderPhoto: currentUser?.image,
           });
-          if(chatMesages.length === 0) {
-            await doc.update({
-              myChats: arrayUnion(chat.user)
-            });
+          if(!chaTRecipient.myChats.includes(user.uid)) {
             await chatDoc.update({
               myChats: arrayUnion(user.uid)
+            });
+          } else if (!currentUser.myChats.includes(chat.user)) {
+            await doc.update({
+              myChats: arrayUnion(chat.user)
             });
           }
           setLoading(false);
@@ -157,12 +192,14 @@ export default function MessageScreen({ route, navigation }) {
         sendTo: chat.displayName,
         senderPhoto: currentUser.image,
       })
-      if(chatMesages.length === 0) {
-        await doc.update({
-          myChats: arrayUnion(chat.user)
-        });
+      if(!chaTRecipient.myChats.includes(user.uid)) {
         await chatDoc.update({
           myChats: arrayUnion(user.uid)
+        });
+      } 
+      if (!currentUser.myChats.includes(chat.user)) {
+        await doc.update({
+          myChats: arrayUnion(chat.user)
         });
       }
       setLoading(false);
@@ -191,12 +228,13 @@ export default function MessageScreen({ route, navigation }) {
                 sendTo: chat.displayName,
                 senderPhoto: currentUser.image,
             });
-            if(chatMesages.length === 0) {
-              await doc.update({
-                myChats: arrayUnion(chat.user)
-              });
+            if(!chaTRecipient.myChats.includes(user.uid)) {
               await chatDoc.update({
                 myChats: arrayUnion(user.uid)
+              });
+            } else if (!currentUser.myChats.includes(chat.user)) {
+              await doc.update({
+                myChats: arrayUnion(chat.user)
               });
             }
             setLoading(false);

@@ -20,6 +20,8 @@
       "supportsTablet": true
     },
     "android": {
+      "useNextNotificationsApi": true,
+      "permissions": ["RECEIVE_BOOT_COMPLETED"],
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
@@ -27,6 +29,17 @@
     },
     "web": {
       "favicon": "./app/assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./app/assets/icon.jpg",
+          "color": "#ffffff",
+          "sounds": ["./local/path/to/mySound.wav", "./local/path/to/myOtherSound.wav"],
+          "mode": "production"
+        }
+      ]
+    ]
   }
 }

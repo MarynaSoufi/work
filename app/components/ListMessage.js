@@ -6,7 +6,6 @@ import { useAuth } from '../firebase/auth'
 
 export default function ListMessage({message, timestamp, src, userName, sendFromId, imageUri, userLocation}) {
   const {user} = useAuth();
-  console.log('message', message);
   return (
     <View>
     {message &&

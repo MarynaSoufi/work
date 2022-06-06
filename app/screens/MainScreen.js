@@ -5,8 +5,8 @@ import { useAuth } from '../firebase/auth';
 import { useFirestoreQuery } from '../firebase/useFirestoreQuery';
 import { ActivityIndicator, Screen, ReqResListItem } from '../components';
 import color from '../config/colors';
-import useLocation from '../hooks/useLocation';
 import routes from '../navigation/routes';
+import useNotifications from '../hooks/useNotifications';
 
 
 export default function MainScreen({navigation}) {
@@ -14,6 +14,7 @@ export default function MainScreen({navigation}) {
   const [ currentUser, setCurrentUser ] = useState([]);
   const [loading, setLoading] = useState(false);
   const [ requests, setRequests ] = useState([]);
+  useNotifications();
 
   const { data } = useFirestoreQuery(firestore.collection('settings'));
 

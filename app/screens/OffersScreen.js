@@ -96,11 +96,6 @@ export default function OffersScreen() {
         isRequest: false,
         myCity: city,
       };
-  //     const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
-  //     const doc = firestore.doc(`users/${user.uid}`);
-  //   doc.update({
-  //     settings: arrayUnion(request)
-  //  });
       let doc = firestore.collection('settings');
       await doc.add(request);
       setVisibleAdd(false);

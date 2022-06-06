@@ -37,12 +37,14 @@ export function AuthProvider ({ children }) {
         rating: [],
         favoriteUsers:[],
         myChats: [],
-        user: response.user.uid
+        user: response.user.uid,
+        expoPushToken: ''
       })
     return await response.user.updateProfile({
       displayName: name,
       photoURL: avatarUrl
     });
+   
    }
 
    //logout

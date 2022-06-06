@@ -11,10 +11,13 @@ import 'react-native-gesture-handler';
 import cache from './app/utils/cache';
 import NetInfo from "@react-native-community/netinfo";
 import ignoreWarnings from 'ignore-warnings';
+import * as Notifications from 'expo-notifications';
+
 
 
 const Stack = createStackNavigator();
 export default function App() {
+
   return (
     <AuthProvider>
       <AppContent />
@@ -30,7 +33,7 @@ LogBox.ignoreLogs([
     "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
 ])
 
-function AppContent() {
+function AppContent({navigation}) {
   const {user} = useAuth();
 
   NetInfo.addEventListener(async (handler) => {
@@ -45,6 +48,20 @@ function AppContent() {
       });
     }
   }) 
+
+  
+  Notifications.setNotificationHandler({
+    handleNotification: async () => {
+    
+      return {
+        shouldPlaySound: true,
+        shouldShowAlert: true,
+        shouldSetBadge: true,
+      }
+    }
+  });
+
+  
 
   return (
     <>

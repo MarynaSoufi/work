@@ -5,6 +5,7 @@ import AppFromImagePicker from './AppFromImagePicker.js';
 import Button from './Button.js';
 import ImageInput from './ImageInput.js';
 import ListChats from './ListChats.js';
+import ListItemDeleteAction from './ListItemDeleteAction.js';
 import ListItemSeparator from './ListItemSeparator.js';
 import ListMessage from './ListMessage.js';
 import ReqResListItem from './ReqResListItem.js';
@@ -19,6 +20,7 @@ export  {
   Button,
   ImageInput,
   ListChats,
+  ListItemDeleteAction,
   ListItemSeparator,
   ListMessage,
   ReqResListItem,

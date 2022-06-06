@@ -8,6 +8,7 @@ import SettingsNavigation from './SettingsNavigatior';
 import MainNavigation from './MainNavigator';
 import ChatNavigation from './ChatNavigator';
 import { FavoriteScreen } from '../screens';
+import useNotifications from '../hooks/useNotifications';
 
 const Tab = createBottomTabNavigator();
 

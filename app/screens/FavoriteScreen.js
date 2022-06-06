@@ -7,9 +7,10 @@ import { useFirestoreQuery } from '../firebase/useFirestoreQuery';
 import { Screen } from '../components';
 import color from '../config/colors';
 import firebase from 'firebase/compat/app';
+import routes from '../navigation/routes';
 
 
-export default function FavoriteScreen() {
+export default function FavoriteScreen({ route, navigation }) {
   const { user } = useAuth();
   const [ favoriteUsers, setFavoriteUsers ] = useState([]);
   const [ favoriteUsersData, setFavoriteUsersData ] = useState([]);
@@ -97,6 +98,12 @@ export default function FavoriteScreen() {
               src={item.image}
               location={item.myCity}
               setFavorite={async () => await toggleFavorites(item)}
+              onMessage={() => navigation.navigate('Chat', {
+                screen: routes.MESSAGE,
+                params: {
+                  item,
+                },
+              })}
             />
               }
               />
