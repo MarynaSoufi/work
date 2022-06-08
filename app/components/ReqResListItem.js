@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     color: color.grayMiddle,
     fontWeight: '200',
     paddingHorizontal: 5,
-    fontSize: Platform.OS === "android" ? 12 : 24,
+    fontSize: Platform.OS === "android" ? 12 : 14,
     fontFamily: Platform.OS === "android" ? "Roboto" : "Avenir",
   },
   iconWrapper: {
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     color: color.grayMiddle,
     fontWeight: '200',
     paddingHorizontal: 5,
-    fontSize: Platform.OS === "android" ? 12 : 24,
+    fontSize: Platform.OS === "android" ? 12 : 14,
     fontFamily: Platform.OS === "android" ? "Roboto" : "Avenir",
   },
   rangeWrapper: {

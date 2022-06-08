@@ -51,6 +51,17 @@ export function AuthProvider ({ children }) {
 
    const logout = () => auth.signOut();
 
+   //delete account
+
+   const deleteAccount = () =>{
+    const user = auth.currentUser;
+    user.delete().then(() => {
+      setUser(null);
+    }).catch((error) => {
+      console.log(error)
+    });
+  }
+
    useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if(user) {
@@ -73,6 +84,7 @@ export function AuthProvider ({ children }) {
      login,
      register,
      logout,
+     deleteAccount
    }
    return (
      <authContext.Provider value={value}>

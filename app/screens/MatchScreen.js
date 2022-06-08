@@ -61,17 +61,17 @@ export default function MatchScreen({ route, navigation }) {
     const arrayRemove = firebase.firestore.FieldValue.arrayRemove;
     const doc = firestore.doc(`users/${user.uid}`);
     if (favoriteUsers) {
-    if(favoriteUsers?.includes(item.id)){
+    if(favoriteUsers?.includes(item.user)){
       await doc.update({
-        favoriteUsers: arrayRemove(item.id)
+        favoriteUsers: arrayRemove(item.user)
       });
-      setFavoriteUsers(favoriteUsers.filter(fr => fr !== item.id));
+      setFavoriteUsers(favoriteUsers.filter(fr => fr !== item.user));
     } else {
       await doc.update({
-        favoriteUsers: arrayUnion(item.id)
+        favoriteUsers: arrayUnion(item.user)
       });
-      if(!favoriteUsers.find(fr => fr.id === item.id)){
-        setFavoriteUsers(favoriteUsers.concat(item.id));
+      if(!favoriteUsers.find(fr => fr.user === item.user)){
+        setFavoriteUsers(favoriteUsers.concat(item.user));
       }
     }
   }
@@ -99,7 +99,7 @@ export default function MatchScreen({ route, navigation }) {
             keyExtractor={d => d.id.toString()}
             renderItem={({item}) =>
             <ListItem
-              isFavorite={!!favoriteUsers?.find(fr => fr === item.id)}
+              isFavorite={!!favoriteUsers?.find(fr => fr === item.user)}
               name={item.displayName}
               rating={item.rating}
               src={item.image}

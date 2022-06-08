@@ -1,12 +1,17 @@
 import { StyleSheet, Text, View, FlatList, Image } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { firestore } from '../firebase/firebase';
 import { useAuth } from '../firebase/auth';
 import colors from '../config/colors';
-import { AccountCard, Screen } from '../components';
+import { AccountCard, Screen, Button } from '../components';
 import color from '../config/colors';
 import routes from '../navigation/routes';
+import { Ionicons } from '@expo/vector-icons';
+import Dialog from "react-native-dialog";
+import { useState } from 'react';
+import { useFirestoreQuery } from '../firebase/useFirestoreQuery';
+import { useFirestoreCrud } from '../firebase/useFirestoreCrud';
 
 const data = [
   {
@@ -41,13 +46,54 @@ const data = [
 ]
 
 export default function SettingsScreen({ navigation }) {
-  const {user, logout} = useAuth();
+  const {user, logout, deleteAccount} = useAuth();
+  const [visibleDelete, setVisibleDelete] = useState(false);
+  const [ currentUser, setCurrentUser ] = useState([]);
+  const [userAction, setUserAction] = useState([]);
+  const { deleteDoc } = useFirestoreCrud(firestore.collection('settings'));
+
+  const usersData = useFirestoreQuery(firestore.collection('users'))
+
+  const settingsData  = useFirestoreQuery(firestore.collection('settings'));
+
+  const setData = () => {
+    setUserAction(settingsData.data?.map(i => ({...i})).filter(f=> f.user === user.uid))
+    const users = usersData.data?.map(i => ({...i}));
+    if(users){
+      const userFound = users.find(i => i.id === user.uid);
+      setCurrentUser(userFound);
+    }
+    
+  }
+  useEffect(() => {
+    setData();
+  }, [usersData.data, settingsData.data])
+
+  const handleDelete = async() => { 
+    if(userAction.length > 0) {
+      userAction.forEach((a) => {
+        deleteDoc(a.id);
+      })
+    }
+    await firestore.collection('users').doc(user.uid).delete();
+    deleteAccount()  
+    setVisibleDelete(false);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+  }
+
+  const showDialogDelete = () => {
+    setVisibleDelete(true);
+  };
+
+  
+  const handleCancelDelete = () => {
+    setVisibleDelete(false);
+  }
+
   return (
     <Screen>
       <View style={styles.container}>
        <View style={styles.nameWrapper}>
-        {/* <Image style={styles.icon} source={require('../assets/iconPetlyS.png')}/> */}
-        <Image style={styles.icon} source={{uri: user.photoURL}}/>
+        <Image style={styles.icon} source={{uri: currentUser?.image}}/>
         <Text style={styles.name}>{user.displayName}</Text>
        </View>
        <FlatList 
@@ -63,9 +109,22 @@ export default function SettingsScreen({ navigation }) {
           }), logout()}} name="login" size={28} color={colors.green} />
           <Text style={styles.text}>Sign Out</Text>
         </View>
-      
-
+        <View style={styles.btnWrapper}>
+        <Ionicons onPress={showDialogDelete} name="warning" size={24} color={colors.green} />
+          <Text style={styles.text}>Delete Account</Text>
+        </View>
     </View>
+    <View style={styles.modal}>
+          <Button title="Show dialog" onPress={showDialogDelete} />
+          <Dialog.Container visible={visibleDelete}>
+            <Dialog.Title>Delete account</Dialog.Title>
+            <Dialog.Description>
+              Do you want to delete your account? You cannot undo this action.
+            </Dialog.Description>
+            <Dialog.Button label="Cancel" onPress={handleCancelDelete} />
+            <Dialog.Button label="Delete" onPress={handleDelete} />
+          </Dialog.Container>
+        </View>
     </Screen>
   
   )
@@ -98,7 +157,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 5,
-    width: 105,
+    width: 140,
     marginHorizontal: 10,
     paddingVertical: 4,
     borderWidth: 2,
