@@ -1,6 +1,5 @@
 import ChatScreen from './ChatScreen.js';
 import FavoriteScreen from './FavoriteScreen.js';
-import HomeScreen from './HomeScreen.js';
 import LoginScreen from './LoginScreen.js';
 import MainScreen from './MainScreen.js';
 import MessageScreen from './MessageScreen.js';
@@ -16,7 +15,6 @@ import WelcomeScreen from './WelcomeScreen.js';
 export {
   ChatScreen,
   FavoriteScreen,
-  HomeScreen,
   LoginScreen,
   MainScreen,
   MessageScreen,

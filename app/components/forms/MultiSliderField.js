@@ -19,7 +19,7 @@ export default function MultiSliderField({name, text}) {
     setFieldValue(name, +values);
   }
 
-  return (
+  return ( 
     <View style={styles.container}>
       <Text style={styles.text}>{text}</Text>
       <View style={styles.wrapper}>
@@ -59,15 +59,8 @@ const styles = StyleSheet.create({
   container: {
     width: "99%",
     alignSelf: 'center',
-    // marginVertical:20,
-    // padding:10,
-    // borderWidth: 2,
-    // borderColor: color.orange,
-    // borderRadius:15,
     marginVertical:20,
     padding:10,
-    // borderWidth: 2,
-    // borderColor: color.white,
     borderRadius:15,
     backgroundColor: 'white',
     shadowColor: '#171717',

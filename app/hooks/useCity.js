@@ -7,32 +7,26 @@ export default useCity = () => {
   const getLocation = async () => {
     try {
       const { granted } = await Location.requestForegroundPermissionsAsync();
-      if(!granted) return;
+      if (!granted) return;
       let { coords } = await Location.getCurrentPositionAsync();
       if (coords) {
         const { latitude, longitude } = coords;
         let response = await Location.reverseGeocodeAsync({
           latitude,
-          longitude
+          longitude,
         });
         for (let item of response) {
           let address = `${item.city}`;
-    
           setLocation(address);
         }
       }
-      
-
-    }catch {
+    } catch {
       console.log(error);
-
     }
-    
-  }
+  };
 
-useEffect(() => {
-  getLocation();
- 
-}, [])
-return location;
-}
+  useEffect(() => {
+    getLocation();
+  }, []);
+  return location;
+};
