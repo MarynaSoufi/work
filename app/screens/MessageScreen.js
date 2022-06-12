@@ -51,12 +51,19 @@ export default function MessageScreen({ route, navigation }) {
   const [currentUser, setCurrentUser] = useState([]);
   const [chaTRecipient, setChaTRecipient] = useState([]);
   const location = useAddress();
+
   const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
+  const arrayRemove = firebase.firestore.FieldValue.arrayRemove;
   const doc = firestore.doc(`users/${user.uid}`);
   const chatDoc = firestore.doc(`users/${chat?.user}`);
 
   const messagesId = [user.uid, chat?.user].sort().join('_');
+  const senderDoc = firestore.doc(`chatMessages/${messagesId}`);
   const usersData = useFirestoreQuery(firestore.collection('users'));
+
+  const chatInfo = useFirestoreQuery(
+    firestore.collection('chatMessages').doc(messagesId)
+  );
 
   const setData = () => {
     const users = usersData.data?.map((i) => ({ ...i }));
@@ -77,8 +84,17 @@ export default function MessageScreen({ route, navigation }) {
 
   useEffect(() => {
     if (componentMounted.current) {
+      senderDoc.update({
+        [`${user.uid}_inChat`]: true,
+        [`${user.uid}_unread`]: 0,
+      });
       setData();
     }
+    return () => {
+      senderDoc.update({
+        [`${user.uid}_inChat`]: false,
+      });
+    };
   }, [messagesId, usersData.data]);
 
   const handlePress = async () => {
@@ -113,6 +129,13 @@ export default function MessageScreen({ route, navigation }) {
         } else if (!currentUser.myChats.includes(chat.user)) {
           await doc.update({
             myChats: arrayUnion(chat.user),
+          });
+        }
+
+        if (!chatInfo?.data?.[`${chat?.user}_inChat`]) {
+          senderDoc.update({
+            [`${chat?.user}_unread`]:
+              chatInfo?.data?.[`${chat?.user}_unread`] + 1,
           });
         }
 
@@ -162,6 +185,13 @@ export default function MessageScreen({ route, navigation }) {
           } else if (!currentUser.myChats.includes(chat.user)) {
             await doc.update({
               myChats: arrayUnion(chat.user),
+            });
+          }
+
+          if (!chatInfo?.data?.[`${chat?.user}_inChat`]) {
+            senderDoc.update({
+              [`${chat?.user}_unread`]:
+                chatInfo?.data?.[`${chat?.user}_unread`] + 1,
             });
           }
           setLoading(false);
@@ -214,6 +244,13 @@ export default function MessageScreen({ route, navigation }) {
           myChats: arrayUnion(chat.user),
         });
       }
+
+      if (!chatInfo?.data?.[`${chat?.user}_inChat`]) {
+        senderDoc.update({
+          [`${chat?.user}_unread`]:
+            chatInfo?.data?.[`${chat?.user}_unread`] + 1,
+        });
+      }
       setLoading(false);
     }
     sendPushNotification(
@@ -259,6 +296,13 @@ export default function MessageScreen({ route, navigation }) {
           } else if (!currentUser.myChats.includes(chat.user)) {
             await doc.update({
               myChats: arrayUnion(chat.user),
+            });
+          }
+
+          if (!chatInfo?.data?.[`${chat?.user}_inChat`]) {
+            senderDoc.update({
+              [`${chat?.user}_unread`]:
+                chatInfo?.data?.[`${chat?.user}_unread`] + 1,
             });
           }
           setLoading(false);

@@ -56,7 +56,6 @@ export function AuthProvider({ children }) {
 
   const deleteAccount = () => {
     const user = auth.currentUser;
-    console.log(user);
     user
       .delete()
       .then(() => {

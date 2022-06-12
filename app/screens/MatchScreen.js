@@ -18,9 +18,9 @@ export default function MatchScreen({ route, navigation }) {
   const [currentUser, setCurrentUser] = useState([]);
   const [match, setMatch] = useState([]);
   const [newMatch, setNewMatch] = useState([]);
-  const [loadMore, setLoadMore] = useState(false);
+  const [loadMore, setLoadMore] = useState(true);
   const [favoriteUsers, setFavoriteUsers] = useState([]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
 
   const { data } = useFirestoreQuery(firestore.collection('settings'));
   const usersData = useFirestoreQuery(firestore.collection('users'));
@@ -69,6 +69,7 @@ export default function MatchScreen({ route, navigation }) {
   };
   useEffect(() => {
     setData();
+    chunckedArray();
   }, [data, usersData.data]);
 
   const toggleFavorites = async (item) => {
@@ -89,6 +90,33 @@ export default function MatchScreen({ route, navigation }) {
           setFavoriteUsers(favoriteUsers.concat(item.user));
         }
       }
+    }
+  };
+
+  const chunckedArray = () => {
+    if (!match || !match.length) {
+      return;
+    }
+
+    if (!loadMore) {
+      return;
+    }
+
+    const amount = (page + 1) * itemsPerPage;
+    let matchL = match?.length;
+    if (matchL <= amount) {
+      const filteredMatches = match?.slice(page * itemsPerPage);
+      setNewMatch(newMatch.concat(filteredMatches));
+      setLoadMore(false);
+    } else {
+      const filteredMatches = match?.slice(
+        page * itemsPerPage,
+        (page + 1) * itemsPerPage
+      );
+      setNewMatch(newMatch.concat(filteredMatches));
+      setPage(page + 1);
+      setLoadMore(true);
+      matchL = matchL - itemsPerPage;
     }
   };
 
@@ -115,9 +143,12 @@ export default function MatchScreen({ route, navigation }) {
               <FlatList
                 style={styles.matchList}
                 nestedScrollEnabled={true}
-                data={match}
+                data={newMatch}
                 keyExtractor={(d) => d.id.toString()}
                 initialNumToRender={5}
+                onEndReached={() => {
+                  chunckedArray();
+                }}
                 renderItem={({ item }) => (
                   <ListItem
                     isFavorite={!!favoriteUsers?.find((fr) => fr === item.user)}

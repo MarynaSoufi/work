@@ -81,7 +81,7 @@ export default function SettingsScreen({ navigation }) {
       });
     }
     await firestore.collection('users').doc(user.uid).delete();
-    deleteAccount();
+    await deleteAccount();
     setVisibleDelete(false);
   };
 

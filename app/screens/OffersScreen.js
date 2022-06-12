@@ -75,8 +75,6 @@ export default function OffersScreen() {
       setCurrentUser(userFound);
     }
   };
-
-  console.log(currentUser);
   useEffect(() => {
     setData();
   }, [data, usersData.data]);
