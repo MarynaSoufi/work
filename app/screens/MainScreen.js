@@ -1,16 +1,9 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  ScrollView,
-  FlatList,
-} from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { firestore } from '../firebase/firebase';
 import { useAuth } from '../firebase/auth';
 import { useFirestoreQuery } from '../firebase/useFirestoreQuery';
-import { ActivityIndicator, Screen, ReqResListItem } from '../components';
+import { Screen, ReqResListItem } from '../components';
 import color from '../config/colors';
 import routes from '../navigation/routes';
 import useNotifications from '../hooks/useNotifications';
@@ -18,7 +11,6 @@ import useNotifications from '../hooks/useNotifications';
 export default function MainScreen({ navigation }) {
   const { user } = useAuth();
   const [currentUser, setCurrentUser] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [requests, setRequests] = useState([]);
   useNotifications();
 
@@ -48,7 +40,6 @@ export default function MainScreen({ navigation }) {
   };
   return (
     <>
-      <ActivityIndicator visible={false} />
       <Screen style={styles.container}>
         <View style={styles.matchListWrapper}>
           <Image

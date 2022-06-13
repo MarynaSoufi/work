@@ -42,7 +42,6 @@ export default function MessageScreen({ route, navigation }) {
 
   const componentMounted = useRef(true);
   const { user } = useAuth();
-  const scrollViewRef = useRef();
   const [loading, setLoading] = useState(false);
   const [visibleSheet, setVisibleSheet] = useState(false);
   const [text, onChangeText] = useState('');
@@ -53,7 +52,6 @@ export default function MessageScreen({ route, navigation }) {
   const location = useAddress();
 
   const arrayUnion = firebase.firestore.FieldValue.arrayUnion;
-  const arrayRemove = firebase.firestore.FieldValue.arrayRemove;
   const doc = firestore.doc(`users/${user.uid}`);
   const chatDoc = firestore.doc(`users/${chat?.user}`);
 
@@ -84,16 +82,37 @@ export default function MessageScreen({ route, navigation }) {
 
   useEffect(() => {
     if (componentMounted.current) {
-      senderDoc.update({
-        [`${user.uid}_inChat`]: true,
-        [`${user.uid}_unread`]: 0,
-      });
+      if (chatInfo?.data === null || chatInfo?.data === undefined) {
+        firestore
+          .collection('chatMessages')
+          .doc(messagesId)
+          .set({
+            [`${user.uid}_inChat`]: true,
+            [`${user.uid}_unread`]: 0,
+            [`${chat?.user}_inChat`]: false,
+            [`${chat?.user}_unread`]: 0,
+          });
+      } else if (chatInfo?.data !== null || !chatInfo?.data !== undefined) {
+        firestore
+          .collection('chatMessages')
+          .doc(messagesId)
+          .update({
+            [`${user.uid}_inChat`]: true,
+            [`${user.uid}_unread`]: 0,
+          });
+      }
       setData();
     }
     return () => {
-      senderDoc.update({
-        [`${user.uid}_inChat`]: false,
-      });
+      firestore
+        .collection('chatMessages')
+        .doc(messagesId)
+        .update({
+          [`${user.uid}_inChat`]: false,
+        });
+      // senderDoc.update({
+      //   [`${user.uid}_inChat`]: false,
+      // });
     };
   }, [messagesId, usersData.data]);
 
@@ -133,10 +152,13 @@ export default function MessageScreen({ route, navigation }) {
         }
 
         if (!chatInfo?.data?.[`${chat?.user}_inChat`]) {
-          senderDoc.update({
-            [`${chat?.user}_unread`]:
-              chatInfo?.data?.[`${chat?.user}_unread`] + 1,
-          });
+          firestore
+            .collection('chatMessages')
+            .doc(messagesId)
+            .update({
+              [`${chat?.user}_unread`]:
+                chatInfo?.data?.[`${chat?.user}_unread`] + 1,
+            });
         }
 
         setLoading(false);
@@ -300,11 +322,15 @@ export default function MessageScreen({ route, navigation }) {
           }
 
           if (!chatInfo?.data?.[`${chat?.user}_inChat`]) {
-            senderDoc.update({
-              [`${chat?.user}_unread`]:
-                chatInfo?.data?.[`${chat?.user}_unread`] + 1,
-            });
+            firestore
+              .collection('chatMessages')
+              .doc(messagesId)
+              .update({
+                [`${chat?.user}_unread`]:
+                  chatInfo?.data?.[`${chat?.user}_unread`] + 1,
+              });
           }
+
           setLoading(false);
           sendPushNotification(
             chat.expoPushToken,
